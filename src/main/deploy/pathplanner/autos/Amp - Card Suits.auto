@@ -1,0 +1,37 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 1.14,
+      "y": 12.73873873873874
+    },
+    "rotation": 60.0
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Amp - Card Suits - 1"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Amp - Card Suits - 2"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Amp - Card Suits - 3"
+          }
+        }
+      ]
+    }
+  },
+  "folder": null,
+  "choreoAuto": false
+}

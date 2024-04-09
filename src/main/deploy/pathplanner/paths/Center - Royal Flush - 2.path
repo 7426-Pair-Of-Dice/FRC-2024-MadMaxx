@@ -1,0 +1,115 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 2.15,
+        "y": 10.9
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 3.1499999999999986,
+        "y": 10.9
+      },
+      "isLocked": false,
+      "linkedName": "Center - Royal Flush - Home"
+    },
+    {
+      "anchor": {
+        "x": 3.6,
+        "y": 12.600000000000001
+      },
+      "prevControl": {
+        "x": 2.5737658343600747,
+        "y": 13.465885077258692
+      },
+      "nextControl": {
+        "x": 4.182342342342343,
+        "y": 12.108648648648648
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 2.15,
+        "y": 10.9
+      },
+      "prevControl": {
+        "x": 3.2136936936936933,
+        "y": 11.41027027027027
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": null
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "eventMarkers": [
+    {
+      "name": "Intake Out",
+      "waypointRelativePos": 0,
+      "command": {
+        "type": "sequential",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "Run Beam Brake"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Secure and Rev",
+      "waypointRelativePos": 1.35,
+      "command": {
+        "type": "parallel",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "Setpoint Intake In"
+              }
+            },
+            {
+              "type": "named",
+              "data": {
+                "name": "Slow Secure"
+              }
+            },
+            {
+              "type": "named",
+              "data": {
+                "name": "Rev Slot 1"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 8.0,
+    "maxAcceleration": 8.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 0,
+    "rotateFast": false
+  },
+  "reversed": false,
+  "folder": "Center - Royal Flush",
+  "previewStartingState": {
+    "rotation": 0,
+    "velocity": 0
+  },
+  "useDefaultConstraints": false
+}

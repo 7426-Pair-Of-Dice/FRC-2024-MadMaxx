@@ -1,0 +1,121 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 2.15,
+        "y": 10.9
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 8.856413890209058,
+        "y": 7.914112160527315
+      },
+      "isLocked": false,
+      "linkedName": "Center - Royal Flush - Home - RED"
+    },
+    {
+      "anchor": {
+        "x": 15.94,
+        "y": 7.35
+      },
+      "prevControl": {
+        "x": 15.94,
+        "y": 7.849999999999985
+      },
+      "nextControl": {
+        "x": 15.94,
+        "y": 6.85
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 2.15,
+        "y": 10.9
+      },
+      "prevControl": {
+        "x": 9.152269093386034,
+        "y": 9.154138231575532
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": null
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "eventMarkers": [
+    {
+      "name": "Intake Out",
+      "waypointRelativePos": 0.05,
+      "command": {
+        "type": "sequential",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "Setpoint Intake Out"
+              }
+            },
+            {
+              "type": "named",
+              "data": {
+                "name": "Run Beam Brake 2"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Intake In + Secure + Rev",
+      "waypointRelativePos": 1.25,
+      "command": {
+        "type": "sequential",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "Setpoint Intake In"
+              }
+            },
+            {
+              "type": "named",
+              "data": {
+                "name": "Secure Note Timeout"
+              }
+            },
+            {
+              "type": "named",
+              "data": {
+                "name": "Rev Slot 1"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 10,
+    "maxAcceleration": 10,
+    "maxAngularVelocity": 540,
+    "maxAngularAcceleration": 720
+  },
+  "goalEndState": {
+    "velocity": 1,
+    "rotation": 0,
+    "rotateFast": false
+  },
+  "reversed": false,
+  "folder": "Center - Royal Flush",
+  "previewStartingState": {
+    "rotation": 0,
+    "velocity": 0
+  },
+  "useDefaultConstraints": false
+}

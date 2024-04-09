@@ -1,0 +1,70 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 13.5,
+        "y": 13.6
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 11.185225225225224,
+        "y": 13.43063063063063
+      },
+      "isLocked": false,
+      "linkedName": "Amp - Do Not Use - 2 - End"
+    },
+    {
+      "anchor": {
+        "x": 2.0,
+        "y": 13.5
+      },
+      "prevControl": {
+        "x": 4.0927927927927925,
+        "y": 13.645585585585586
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "Amp - Do Not Use - 3 - End"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "eventMarkers": [
+    {
+      "name": "Secure Note",
+      "waypointRelativePos": 0,
+      "command": {
+        "type": "parallel",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "Secure Note"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 10.0,
+    "maxAcceleration": 10.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 25.0,
+    "rotateFast": false
+  },
+  "reversed": false,
+  "folder": "Amp - Do Not Use",
+  "previewStartingState": {
+    "rotation": 25.0,
+    "velocity": 0
+  },
+  "useDefaultConstraints": false
+}

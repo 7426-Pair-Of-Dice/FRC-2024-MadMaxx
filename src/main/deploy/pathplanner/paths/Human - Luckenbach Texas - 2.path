@@ -1,0 +1,87 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 14.22,
+        "y": 1.2
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 22.22,
+        "y": 1.2
+      },
+      "isLocked": false,
+      "linkedName": "Human - Luckenbach Texas - 1 - End"
+    },
+    {
+      "anchor": {
+        "x": -3.3000000000000003,
+        "y": 10.95
+      },
+      "prevControl": {
+        "x": -0.8000000000000012,
+        "y": 6.619872981077806
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "Human - Luckenbach Texas - 2 - End"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "eventMarkers": [
+    {
+      "name": "Secure Note",
+      "waypointRelativePos": 0.05,
+      "command": {
+        "type": "sequential",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "Secure Note Timeout"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Rev Shooter",
+      "waypointRelativePos": 0.4,
+      "command": {
+        "type": "parallel",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "Rev Slot 1"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 8.0,
+    "maxAcceleration": 8.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0
+  },
+  "goalEndState": {
+    "velocity": 0.0,
+    "rotation": -60.0,
+    "rotateFast": true
+  },
+  "reversed": false,
+  "folder": "Human - Luckenbach Texas",
+  "previewStartingState": {
+    "rotation": 0,
+    "velocity": 0
+  },
+  "useDefaultConstraints": false
+}
