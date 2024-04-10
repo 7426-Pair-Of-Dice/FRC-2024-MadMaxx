@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems.body;
 
+import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.Slot1Configs;
@@ -15,12 +16,15 @@ import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.StaticBrake;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.ctre.phoenix6.signals.SensorDirectionValue;
 import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
 
 import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.shared.Alert;
 import frc.robot.shared.Constants;
@@ -100,7 +104,7 @@ public class Arm extends SubsystemBase {
     FeedbackConfigs feedback = newConfig.Feedback;
     feedback.FeedbackRemoteSensorID = m_encoder.getDeviceID();
     feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
-
+    
     // Set soft limits
     var limits = newConfig.SoftwareLimitSwitch;
     limits.ForwardSoftLimitEnable = true;
@@ -150,6 +154,13 @@ public class Arm extends SubsystemBase {
     motionMagic.MotionMagicCruiseVelocity = 3000.0;
     motionMagic.MotionMagicJerk = 2000.0;
 
+    //Configing the arm encoder
+    var encoderConfig = new CANcoderConfiguration();
+    encoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive;
+    encoderConfig.MagnetSensor.AbsoluteSensorRange = AbsoluteSensorRangeValue.Signed_PlusMinusHalf;
+    // encoderConfig.MagnetSensor.MagnetOffset = 0.0029296875;
+    m_encoder.getConfigurator().apply(encoderConfig, 0.05);
+
     config.apply(newConfig, 0.050);
   }
 
@@ -180,6 +191,8 @@ public class Arm extends SubsystemBase {
         setMotors(0.0);
         break;
     }
+
+    SmartDashboard.putNumber("Arm Stator Currenty", 10);
   }
 
   public double getRotations() {
@@ -279,8 +292,6 @@ public class Arm extends SubsystemBase {
     
     if(Constants.Dashboard.kSendErrors) {
       builder.addDoubleProperty("Error", this::getError, null);
-      builder.addDoubleProperty("Acceleration", ()->{return m_topMotor.getAcceleration().getValueAsDouble();}, null);
-
     }
     
     if(Constants.Dashboard.kSendReferences) {
@@ -295,8 +306,12 @@ public class Arm extends SubsystemBase {
       builder.addDoubleProperty("Feed Forward", this::getElevatorFeed, null);
       builder.addStringProperty("Setpoint Name", ()->{return m_setpoint.name();}, null);
 
+      builder.addDoubleProperty("Top Arm Stator", ()->{return m_topMotor.getStatorCurrent().getValueAsDouble();}, null);
+
       builder.addDoubleProperty("Debug Angle", ()->{return m_customAngle;}, (double value)->{m_customAngle=value;});
       builder.addDoubleProperty("Limelight kP", ()->{return m_temporaryRemove;}, (double value)->{m_temporaryRemove = value;});
+
+      builder.addDoubleArrayProperty("", null, null);
     }
   }
 }
