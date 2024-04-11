@@ -207,7 +207,7 @@ public class RobotContainer {
     );
 
     m_bumperClearOut = new ParallelDeadlineGroup(
-      new WaitCommand(0.2),
+      new WaitCommand(0.175),
       new UpdateSetpoint(m_arm, m_elevator, Setpoint.BumperOut, 0.0, 0.0)
     );
     
@@ -302,8 +302,8 @@ public class RobotContainer {
         Commands.print("We are starting auto aim"),
         new InstantCommand(()->{
           // m_arm.setPosition(Limelight.calculation.angle());
-          m_arm.setState(ArmState.ClosedLoop);
-          // m_arm.setState(ArmState.Debug);
+          // m_arm.setState(ArmState.ClosedLoop);
+          m_arm.setState(ArmState.Debug);
         }, m_arm),
         runShooter(Limelight.calculation.rps())
       ))

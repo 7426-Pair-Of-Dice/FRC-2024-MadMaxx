@@ -7,16 +7,18 @@ package frc.robot.subsystems.body;
 public class BodyConstants {
 
     public static final ArmConfig kArmConfig = new ArmConfig(17, 18, 21);
-    public static final Limits kArmLimits = new Limits(100.0, 80.0, 0.25, 2.0 / 360.0);
+    public static final Limits kArmLimits = new Limits(80.0, 45.0, 0.25, 1.0 / 360.0);
 
     public static final ElevatorConfig kElevatorConfig = new ElevatorConfig(19, 20, 22);
-    public static final Limits kElevatorLimits = new Limits(100.0, 80.0, 2.3, 0.05);
+    public static final Limits kElevatorLimits = new Limits(100.0, 45.0, 2.3, -0.05);
+
+    public static final ClimberLimits kClimberLimits = new ClimberLimits(80.0, 45.0);
 
     /**
      * An enum used to store the information needed for each setpoint relating to the arm and elevator.
      *
      * @param arm The set position for the arm to go to in degrees.
-     * @param armFeed The set feed forward for the arm to go in rotations.
+     * @param armFeed The set feed forward for the arm to use in setpoints.
      * @param elevator The set position for the elevator to go to in rotations.
      * @param elevatorFeed The set feed forward for the elevator to use in setpoints.
      * @param elevatorSlot The set PID slot for the elevator Talons to use in setpoints.
@@ -27,7 +29,7 @@ public class BodyConstants {
         Idle(22.0, 0, 0.15, -0.7103000000000002),
         IntakeGround(2.5, 0, 2.175, 0.25),
         Speaker(22.0, 0, 0.15, -0.48640000000000017),
-        Podium(32.0, 0, 0.15, 1.1652456),
+        Podium(35.0, 0, 0.15, 1.1652456),
         Wing(50.0, 0, 0.15, 1.1652456),
         Amp(115.0, 0.85, 0.74, 2),
         Trap(0.0, 0, 2.175, 0.25),
@@ -112,4 +114,5 @@ public class BodyConstants {
     public record ArmConfig(int topId, int bottomId, int encoderId) {};
     public record ElevatorConfig(int leftId, int rightId, int encoderId) {};
     public record Limits(double statorLimit, double supplyLimit, double forwardLimit, double reverseLimit) {};
+    public record ClimberLimits(double statorLimit, double supplyLimit) {};
 }

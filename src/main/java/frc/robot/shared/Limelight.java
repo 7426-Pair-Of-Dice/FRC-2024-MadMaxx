@@ -20,7 +20,7 @@ public class Limelight {
     public static double getDistance() {
         var ty = LimelightHelpers.getTY(m_primary);
 
-        double limelightMountAngleDegrees = 24.8; 
+        double limelightMountAngleDegrees = 35.5; 
 
         double limelightLensHeightInches = 7.5; 
 

@@ -122,6 +122,10 @@ public class Arm extends SubsystemBase {
     voltage.PeakForwardVoltage = 16;
     voltage.PeakReverseVoltage = -16;
 
+    // Set ramp period (0.02 - 0.05 secs)
+    var ramp = newConfig.ClosedLoopRamps;
+    ramp.VoltageClosedLoopRampPeriod = 0.05;
+
     // Set current limits
     var current = newConfig.CurrentLimits;
     current.StatorCurrentLimit = kArmLimits.statorLimit();
@@ -134,8 +138,8 @@ public class Arm extends SubsystemBase {
     slot0.StaticFeedforwardSign = StaticFeedforwardSignValue.UseClosedLoopSign;
     slot0.kP = 175.0;
     slot0.kI = 0.0;
-    slot0.kD = 0.025;
-    slot0.kS = 0.15;
+    slot0.kD = 0.03;
+    slot0.kS = 0.1;
     slot0.kV = 0.0;
 
     // Configure PID in Slot 1
@@ -146,7 +150,6 @@ public class Arm extends SubsystemBase {
     slot1.kD = 0.0;
     slot1.kS = 0.5;
     slot1.kV = 0.12;
-
 
     // Configuring MotionMagic
     var motionMagic = newConfig.MotionMagic;

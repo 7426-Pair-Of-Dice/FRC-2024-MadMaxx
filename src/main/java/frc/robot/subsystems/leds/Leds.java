@@ -19,7 +19,7 @@ public class Leds {
   }
 
   // LED Physical Constants
-  private final int Length = 19;
+  private final int Length = 33;
   private final int Port = 0;
 
   // LED IO
