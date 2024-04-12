@@ -32,8 +32,10 @@ public class Intake extends SubsystemBase {
   private static RelativeEncoder m_encoder;
   private static SparkPIDController m_pidController;
 
-  private static DigitalInput m_beamBrake;
-  private static int kBeamBrakeId = 2;
+  private static DigitalInput m_lowBrake;
+  private static DigitalInput m_highBrake;
+  private static int kLowBrakeId = 1;
+  private static int kHighBrakeId = 2;
 
   private static boolean m_lastBeamState = false;
   private static double m_noteSeenPosition = 0.0;
@@ -41,7 +43,8 @@ public class Intake extends SubsystemBase {
   private Intake() {
     m_topMotor = new CANSparkMax(kIntakeConfig.topId(), MotorType.kBrushless);
     m_bottomMotor = new CANSparkMax(kIntakeConfig.bottomId(), MotorType.kBrushless);
-    m_beamBrake = new DigitalInput(kBeamBrakeId);
+    m_lowBrake = new DigitalInput(kLowBrakeId);
+    m_highBrake = new DigitalInput(kHighBrakeId);
 
     m_topMotor.restoreFactoryDefaults();
     m_topMotor.setIdleMode(IdleMode.kBrake);
@@ -80,11 +83,11 @@ public class Intake extends SubsystemBase {
 
   @Override
   public void periodic() {
-    Leds.getInstance().NoteDetected = noteDetected();
-    if(noteDetected() && !m_lastBeamState) {
+    Leds.getInstance().NoteDetected = highBrake();
+    if(highBrake() && !m_lastBeamState) {
       m_noteSeenPosition = m_encoder.getPosition();
     }
-    m_lastBeamState = noteDetected();
+    m_lastBeamState = highBrake();
   }
 
   public void noteToPosition() {
@@ -107,16 +110,22 @@ public class Intake extends SubsystemBase {
     m_topMotor.set(0);
   }
 
-  public boolean noteDetected() {
-    return !m_beamBrake.get();
+  public boolean highBrake() {
+    return !m_highBrake.get();
   }
+
+  public boolean lowBrake() {
+    return !m_lowBrake.get();
+  }
+
   
   @Override
   public void initSendable(SendableBuilder builder) {
     builder.setSmartDashboardType("Arm");
     
     if(Constants.Dashboard.kSendStates) {
-      builder.addBooleanProperty("Note Detected", this::noteDetected, null);
+      builder.addBooleanProperty("High Brake", this::highBrake, null);
+      builder.addBooleanProperty("Low Brake", this::lowBrake, null);
       builder.addDoubleProperty("Velocity", this::getVelocity, null);
       builder.addDoubleProperty("Position", ()->{return m_encoder.getPosition();}, null);
       builder.addDoubleProperty("Note Seen", ()->{return m_noteSeenPosition;}, null);

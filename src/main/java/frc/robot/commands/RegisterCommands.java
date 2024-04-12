@@ -11,10 +11,13 @@ import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.body.BodyConstants.Setpoint;
 import frc.robot.shared.Limelight;
 import frc.robot.shared.LimelightHelpers;
@@ -64,7 +67,8 @@ public class RegisterCommands {
             "Stop Manipulator", 
             new SequentialCommandGroup(
                 runShooter(0.0, 0.0),
-                runIntake(0.0, 0.0)
+                runIntake(0.0, 0.0),
+                new InstantCommand(()->{m_arm.setState(ArmState.Setpoint);},m_arm)
             )
         );
         NamedCommands.registerCommand(
@@ -106,10 +110,6 @@ public class RegisterCommands {
             runShooter(85.0, 2.0)
         );
         NamedCommands.registerCommand(
-            "Rev Limelight", 
-           null
-        );
-        NamedCommands.registerCommand(
             "Stop Shooter",
             runShooter(0.0, 0.0)
         );
@@ -129,6 +129,10 @@ public class RegisterCommands {
         NamedCommands.registerCommand(
             "Run Beam Brake Auto", 
             runBeamBrake(0.50).withTimeout(5.0)
+        );
+        NamedCommands.registerCommand(
+            "Secure Intake",
+            secureIntake().withTimeout(5.0)
         );
         NamedCommands.registerCommand(
             "Secure Note", 
@@ -163,11 +167,17 @@ public class RegisterCommands {
         NamedCommands.registerCommand("Setpoint Intake In", intakeSetpoint(false));
         NamedCommands.registerCommand("Setpoint Intake Out", intakeSetpoint(true));
 
+        NamedCommands.registerCommand("Beam to Idle", new SequentialCommandGroup(
+            new WaitUntilCommand(()->{return m_intake.lowBrake();}),
+            new UpdateSetpoint(m_arm, m_elevator, Setpoint.Idle)
+        ));
+        NamedCommands.registerCommand("Auto Aim", new AutoAim(true));
+
         // Group Commands
         NamedCommands.registerCommand(
             "Score Preload",
             new SequentialCommandGroup(
-                new UpdateSetpoint(m_arm, m_elevator, Setpoint.Speaker),
+                new UpdateSetpoint(m_arm, m_elevator, Setpoint.Slot9),
                 runShooter(80.0, 1.0),
                 runIntake(1.0, 0.08),
                 new UpdateSetpoint(m_arm, m_elevator, Setpoint.Idle),
@@ -223,18 +233,31 @@ public class RegisterCommands {
             )
         );
 
+        // NamedCommands.registerCommand(
+        //     "Score with Limelight",
+        //     new SequentialCommandGroup(
+        //         // could be in rev limelight
+        //         new InstantCommand(()->{
+        //             m_arm.setState(ArmState.ClosedLoop);
+        //           }, m_arm),
+        //         runShooter(Limelight.calculation.rps(), 2),
+        //         // end of rev limelight
+        //         // new WaitCommand(1),
+        //         runIntake(1.0, 0.2),
+        //         new InstantCommand(()->{
+        //             m_arm.setState(ArmState.Setpoint);
+        //           }, m_arm),
+        //         new UpdateSetpoint(m_arm, m_elevator, Setpoint.Idle),
+        //         runShooter(0.0, 0.0),
+        //         runIntake(0.0, 0.0)
+        //     )
+        // );
+
         NamedCommands.registerCommand(
-            "Score with Limelight",
+            "Score Stateless Modified Again Again",
             new SequentialCommandGroup(
-                new InstantCommand(()->{
-                    m_arm.setState(ArmState.ClosedLoop);
-                  }, m_arm),
-                runShooter(Limelight.calculation.rps(), 2),
-                new WaitCommand(1),
+                new UpdateSetpoint(m_arm, m_elevator, Setpoint.Slot6),
                 runIntake(1.0, 0.2),
-                new InstantCommand(()->{
-                    m_arm.setState(ArmState.Setpoint);
-                  }, m_arm),
                 new UpdateSetpoint(m_arm, m_elevator, Setpoint.Idle),
                 runShooter(0.0, 0.0),
                 runIntake(0.0, 0.0)
@@ -242,9 +265,10 @@ public class RegisterCommands {
         );
 
         NamedCommands.registerCommand(
-            "Score Stateless Modified Again Again",
+            "Score Stateless Modified Again Again 2",
             new SequentialCommandGroup(
-                new UpdateSetpoint(m_arm, m_elevator, Setpoint.Slot6),
+                new UpdateSetpoint(m_arm, m_elevator, Setpoint.Slot10),
+                new WaitCommand(1.0),
                 runIntake(1.0, 0.2),
                 new UpdateSetpoint(m_arm, m_elevator, Setpoint.Idle),
                 runShooter(0.0, 0.0),
@@ -287,7 +311,7 @@ public class RegisterCommands {
     private Command runBeamSafety() {
         return new SequentialCommandGroup(
             new RunCommand(()->{m_intake.setPercent(1.0);}, m_intake)
-            .until(()->{return m_intake.noteDetected();}),
+            .until(()->{return m_intake.highBrake();}),
             new ParallelDeadlineGroup(
                 new WaitCommand(0.075),
                 new RunCommand(()->{m_intake.setPercent(-0.2);}, m_intake)
@@ -301,7 +325,7 @@ public class RegisterCommands {
     private Command runBeamBrake2(double power) {
         return new SequentialCommandGroup(
             new RunCommand(()->{m_intake.setPercent(1.0);}, m_intake)
-            .until(()->{return m_intake.noteDetected();}),
+            .until(()->{return m_intake.highBrake();}),
             //new RunCommand(()->{m_intake.setPercent(-0.4);}, m_intake)
             // .withTimeout(0.075),
             new RunCommand(()->{m_intake.stop();}, m_intake)
@@ -311,16 +335,16 @@ public class RegisterCommands {
     private Command intakeSetpoint(boolean out) {
         if(out) {
             return new SequentialCommandGroup(
-                new WaitCommand(0.25).deadlineWith(
-                    new UpdateSetpoint(m_arm, m_elevator, Setpoint.BumperOut, 0.0, 0.125)
-                ),
+                // new WaitCommand(0.25).deadlineWith(
+                //     new UpdateSetpoint(m_arm, m_elevator, Setpoint.BumperOut, 0.0, 0.125)
+                // ),
                 new UpdateSetpoint(m_arm, m_elevator, Setpoint.IntakeGround)
             );
         } else {
             return new SequentialCommandGroup(
-                new WaitCommand(0.25).deadlineWith(
-                    new UpdateSetpoint(m_arm, m_elevator, Setpoint.BumperIn, 0.0, 0.25)
-                ),
+                // new WaitCommand(0.25).deadlineWith(
+                //     new UpdateSetpoint(m_arm, m_elevator, Setpoint.BumperIn, 0.0, 0.25)
+                // ),
                 new UpdateSetpoint(m_arm, m_elevator, Setpoint.Idle)
             );
         }
@@ -355,7 +379,7 @@ public class RegisterCommands {
     private Command runBeamBrake(double power) {
         return new SequentialCommandGroup(
             new RunCommand(()->{m_intake.setPercent(1.0);}, m_intake)
-            .until(()->{return m_intake.noteDetected();}),
+            .until(()->{return m_intake.highBrake();}),
             new RunCommand(()->{m_intake.setPercent(-0.4);}, m_intake)
             .withTimeout(0.075),
             new RunCommand(()->{m_intake.noteToPosition();}, m_intake)
@@ -365,7 +389,7 @@ public class RegisterCommands {
     private Command slowSecure() {
         return new SequentialCommandGroup(
             new RunCommand(()->{m_intake.setPercent(0.4);}, m_intake)
-            .until(()->{return m_intake.noteDetected();}),
+            .until(()->{return m_intake.highBrake();}),
             new RunCommand(()->{m_intake.stop();}, m_intake)
         );
     }

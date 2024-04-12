@@ -23,6 +23,9 @@ import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
+import frc.robot.commands.AutoAim;
+import frc.robot.commands.DebugShot;
 import frc.robot.commands.RegisterCommands;
 import frc.robot.commands.UpdateSetpoint;
 import frc.robot.lib.Controls.Bindings;
@@ -152,7 +155,7 @@ public class RobotContainer {
     m_intakeUntilNote = () -> {
       return new SequentialCommandGroup(
         runIntake()
-        .until(()->{return m_intake.noteDetected();}),
+        .until(()->{return m_intake.highBrake();}),
         runIntake(-0.2).withTimeout(0.075),
         stopIntake()
       );
@@ -161,7 +164,7 @@ public class RobotContainer {
     m_secureNote = () -> {
       return new SequentialCommandGroup(
         new RunCommand(()->{m_intake.setPercent(-0.2);}, m_intake)
-        .until(()->{return !m_intake.noteDetected();})
+        .until(()->{return !m_intake.highBrake();})
         .withTimeout(0.075),
         stopIntake()
       );
@@ -175,16 +178,21 @@ public class RobotContainer {
       return new RunCommand(()->{m_climber.setMotor(-1.0);}, m_climber);
     };
 
-    m_setpointIntakeGround = new ParallelCommandGroup(
-      new UpdateSetpoint(m_arm, m_elevator, Setpoint.IntakeGround),
-      m_intakeUntilNote.get()
-    );
-
     m_setpointIdle = () -> {
       return new UpdateSetpoint(m_arm, m_elevator, Setpoint.Idle);
    
     };
 
+    m_setpointIntakeGround = new ParallelCommandGroup(
+      new SequentialCommandGroup(
+        new UpdateSetpoint(m_arm, m_elevator, Setpoint.IntakeGround),
+        new WaitUntilCommand(()->m_intake.lowBrake()),
+        m_setpointIdle.get()
+      ),
+      secureIntake()
+      
+    );
+    
     m_setpointSpeaker = new ParallelCommandGroup(
       new UpdateSetpoint(m_arm, m_elevator, Setpoint.Speaker, 0.0, 0.1),
       runShooter(70.0)
@@ -248,7 +256,7 @@ public class RobotContainer {
       .whileTrue(m_drivetrain.applyRequest(() -> brake));
 
     Bindings.Drivetrain.RoboOrient
-      .whileTrue(m_drivetrain.applyRequest(() -> point.withModuleDirection(new Rotation2d(-m_oi.getDriver().getLeftY(), -m_oi.getDriver().getLeftX()))));
+      .whileTrue(m_drivetrain.applyRequest(() -> point.withModuleDirection(new Rotation2d(0, 0))));
 
     Bindings.Drivetrain.Reorient
       .onTrue(m_drivetrain.runOnce(() -> m_drivetrain.seedFieldRelative()));
@@ -260,7 +268,7 @@ public class RobotContainer {
       .onFalse(stopIntake());
 
     Bindings.Intake.Beam
-      .whileTrue(m_intakeUntilNote.get())
+      .whileTrue(secureIntake())
       .onFalse(stopIntake());
 
     Bindings.Intake.Out
@@ -285,35 +293,18 @@ public class RobotContainer {
     // Commands
     Bindings.Setpoint.IntakeGround
       .whileTrue(
-        m_bumperClearOut
-        .andThen(
-          m_setpointIntakeGround)
+        // m_bumperClearOut
+        // .andThen(
+          m_setpointIntakeGround
         )
       .whileFalse(
-        m_bumperClearIn
-        .andThen(m_setpointIdle.get())
-        .andThen(m_secureNote.get().withTimeout(0.25))
+        m_setpointIdle.get()
         .andThen(stopIntake())
       );
       
     
     Bindings.Auto.Aim
-      .whileTrue(new SequentialCommandGroup(
-        Commands.print("We are starting auto aim"),
-        new InstantCommand(()->{
-          // m_arm.setPosition(Limelight.calculation.angle());
-          // m_arm.setState(ArmState.ClosedLoop);
-          m_arm.setState(ArmState.Debug);
-        }, m_arm),
-        runShooter(Limelight.calculation.rps())
-      ))
-      .onFalse(new SequentialCommandGroup(
-        Commands.print("We are ending auto aim"),
-        new InstantCommand(()->{
-          m_arm.setState(ArmState.Setpoint);
-        }, m_arm),
-        stopShooter()
-      ));
+      .whileTrue(new AutoAim());
 
     Bindings.Setpoint.Amp
       .whileTrue(m_setpointAmp)
@@ -332,6 +323,12 @@ public class RobotContainer {
       .whileFalse(m_trapClearIn.andThen(m_setpointIdle.get())
                   .andThen(stopShooter())
       );
+
+    Bindings.Setpoint.Reset
+        .whileTrue(new ParallelCommandGroup(
+          new UpdateSetpoint(m_arm, m_elevator, Setpoint.Reset),
+          m_drivetrain.applyRequest(() -> point.withModuleDirection(new Rotation2d(-m_oi.getDriver().getLeftY(), -m_oi.getDriver().getLeftX())))
+        ));
 
     // Dashboard
     SmartDashboard.putData(m_arm);

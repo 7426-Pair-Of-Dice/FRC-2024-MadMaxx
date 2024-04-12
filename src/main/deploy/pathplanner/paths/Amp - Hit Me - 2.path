@@ -1,0 +1,52 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 2.7511687455807343,
+        "y": 6.915037974220092
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 3.7511687455807343,
+        "y": 6.915037974220092
+      },
+      "isLocked": false,
+      "linkedName": "Amp - Hit Me - 1 - End"
+    },
+    {
+      "anchor": {
+        "x": 8.094607180205351,
+        "y": 7.432741351969191
+      },
+      "prevControl": {
+        "x": 7.094607180205351,
+        "y": 7.432741351969191
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": null
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 8.0,
+    "maxAcceleration": 8.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 0,
+    "rotateFast": false
+  },
+  "reversed": false,
+  "folder": "Amp - Hit Me",
+  "previewStartingState": {
+    "rotation": 0,
+    "velocity": 0
+  },
+  "useDefaultConstraints": false
+}

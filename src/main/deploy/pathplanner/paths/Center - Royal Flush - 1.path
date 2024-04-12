@@ -3,41 +3,41 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.15,
-        "y": 10.9
+        "x": 1.25,
+        "y": 5.55
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.1499999999999986,
-        "y": 10.9
+        "x": 2.2499999999999987,
+        "y": 5.55
       },
       "isLocked": false,
       "linkedName": "Center - Royal Flush - Home"
     },
     {
       "anchor": {
-        "x": 3.65,
-        "y": 10.9
+        "x": 2.4499999999999997,
+        "y": 5.55
       },
       "prevControl": {
-        "x": 3.3228828828828822,
-        "y": 11.301081081081081
+        "x": 2.4499999999999997,
+        "y": 5.8
       },
       "nextControl": {
-        "x": 3.966016606108464,
-        "y": 10.512529349932558
+        "x": 2.4499999999999997,
+        "y": 5.3
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.15,
-        "y": 10.9
+        "x": 1.25,
+        "y": 5.55
       },
       "prevControl": {
-        "x": 3.4320720720720717,
-        "y": 10.664144144144142
+        "x": 2.5320720720720717,
+        "y": 5.314144144144142
       },
       "nextControl": null,
       "isLocked": false,
@@ -57,7 +57,13 @@
             {
               "type": "named",
               "data": {
-                "name": "Run Beam Brake 2"
+                "name": "Secure Intake"
+              }
+            },
+            {
+              "type": "named",
+              "data": {
+                "name": "Beam to Idle"
               }
             }
           ]
@@ -66,9 +72,9 @@
     },
     {
       "name": "Secure and Rev",
-      "waypointRelativePos": 1.6,
+      "waypointRelativePos": 1.25,
       "command": {
-        "type": "parallel",
+        "type": "sequential",
         "data": {
           "commands": [
             {
@@ -78,11 +84,28 @@
               }
             },
             {
-              "type": "named",
+              "type": "wait",
               "data": {
-                "name": "Slow Secure"
+                "waitTime": 0.1
               }
             },
+            {
+              "type": "named",
+              "data": {
+                "name": "Rev Slot 1"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "REV",
+      "waypointRelativePos": 0,
+      "command": {
+        "type": "parallel",
+        "data": {
+          "commands": [
             {
               "type": "named",
               "data": {

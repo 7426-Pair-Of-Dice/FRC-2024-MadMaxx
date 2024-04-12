@@ -3,41 +3,41 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.15,
-        "y": 10.9
+        "x": 1.25,
+        "y": 5.55
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.1499999999999986,
-        "y": 10.9
+        "x": 1.9571067811865475,
+        "y": 6.257106781186548
       },
       "isLocked": false,
       "linkedName": "Center - Royal Flush - Home"
     },
     {
       "anchor": {
-        "x": 3.6,
-        "y": 12.600000000000001
+        "x": 2.5,
+        "y": 7.05
       },
       "prevControl": {
-        "x": 2.5737658343600747,
-        "y": 13.465885077258692
+        "x": 2.323223304703363,
+        "y": 7.226776695296637
       },
       "nextControl": {
-        "x": 4.182342342342343,
-        "y": 12.108648648648648
+        "x": 2.676776695296637,
+        "y": 6.873223304703363
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.15,
-        "y": 10.9
+        "x": 1.25,
+        "y": 5.55
       },
       "prevControl": {
-        "x": 3.2136936936936933,
-        "y": 11.41027027027027
+        "x": 1.843773058186436,
+        "y": 6.354632559229321
       },
       "nextControl": null,
       "isLocked": false,
@@ -57,7 +57,13 @@
             {
               "type": "named",
               "data": {
-                "name": "Run Beam Brake"
+                "name": "Secure Intake"
+              }
+            },
+            {
+              "type": "named",
+              "data": {
+                "name": "Beam to Idle"
               }
             }
           ]
@@ -68,7 +74,7 @@
       "name": "Secure and Rev",
       "waypointRelativePos": 1.35,
       "command": {
-        "type": "parallel",
+        "type": "sequential",
         "data": {
           "commands": [
             {
@@ -80,9 +86,20 @@
             {
               "type": "named",
               "data": {
-                "name": "Slow Secure"
+                "name": "Rev Slot 1"
               }
-            },
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "REV",
+      "waypointRelativePos": 0,
+      "command": {
+        "type": "parallel",
+        "data": {
+          "commands": [
             {
               "type": "named",
               "data": {

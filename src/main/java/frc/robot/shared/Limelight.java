@@ -11,7 +11,7 @@ public class Limelight {
     
     public static void periodic() {
         // If a tag is seen, calculate our shot.
-        LimelightHelpers.setPipelineIndex(m_primary, 2);
+        LimelightHelpers.setPipelineIndex(m_primary, 0);
         if(LimelightHelpers.getTV(m_primary)) {
             calculation = calculateShot();
         }
@@ -20,7 +20,7 @@ public class Limelight {
     public static double getDistance() {
         var ty = LimelightHelpers.getTY(m_primary);
 
-        double limelightMountAngleDegrees = 35.5; 
+        double limelightMountAngleDegrees = 34.8; 
 
         double limelightLensHeightInches = 7.5; 
 
@@ -39,11 +39,11 @@ public class Limelight {
         double rps = 70.0;
         double distance = getDistance();
         double angle;
-        if(distance < 135.0){
-            angle = -0.355 + 0.613 * distance - 2.05E-3 * Math.pow(distance, 2);
+        if(distance < 112.0){
+            angle = -0.0864 + (0.622 * distance) + (-2.22E-03 * Math.pow(distance, 2));
         }
         else{
-            angle = 31.3 + 0.136 * distance - 2.21E-4 * Math.pow(distance, 2);
+            angle = 10.7 + (0.378 * distance) - (8.64E-4 * Math.pow(distance, 2));
         }
 
         SmartDashboard.putNumber("Auto Limelight Angle", angle);

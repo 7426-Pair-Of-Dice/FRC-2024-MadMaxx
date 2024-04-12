@@ -8,20 +8,20 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.639999999999999,
-        "y": 4.789872981077805
+        "x": 5.016121023233037,
+        "y": 4.4744363362600605
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 14.22,
-        "y": 1.2
+        "x": 12.52,
+        "y": 1.9999999999999998
       },
       "prevControl": {
-        "x": 6.220000000000001,
-        "y": 1.2
+        "x": 9.962037221371741,
+        "y": 3.48525309663232
       },
       "nextControl": null,
       "isLocked": false,
@@ -47,7 +47,7 @@
             {
               "type": "named",
               "data": {
-                "name": "Secure Note"
+                "name": "Secure Intake"
               }
             }
           ]
@@ -63,8 +63,8 @@
   },
   "goalEndState": {
     "velocity": 0.0,
-    "rotation": 0,
-    "rotateFast": true
+    "rotation": -60.0,
+    "rotateFast": false
   },
   "reversed": false,
   "folder": "Human - Luckenbach Texas",

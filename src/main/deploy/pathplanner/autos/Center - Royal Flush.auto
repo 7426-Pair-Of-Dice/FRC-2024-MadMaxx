@@ -2,8 +2,8 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 2.15,
-      "y": 10.700000000000001
+      "x": 1.25,
+      "y": 5.55
     },
     "rotation": 0
   },
@@ -24,12 +24,6 @@
           }
         },
         {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.25
-          }
-        },
-        {
           "type": "path",
           "data": {
             "pathName": "Center - Royal Flush - 1"
@@ -42,7 +36,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Score Stateless Modified Again The Sequel"
+                  "name": "Score Stateless Modified Again Again"
                 }
               },
               {
@@ -67,7 +61,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Score Stateless Modified"
+                  "name": "Score Stateless Modified Again Again"
                 }
               },
               {
@@ -109,15 +103,9 @@
           "data": {
             "commands": [
               {
-                "type": "wait",
-                "data": {
-                  "waitTime": 0.1
-                }
-              },
-              {
                 "type": "named",
                 "data": {
-                  "name": "Score Stateless Modified Again"
+                  "name": "Score Stateless Modified Again Again"
                 }
               }
             ]

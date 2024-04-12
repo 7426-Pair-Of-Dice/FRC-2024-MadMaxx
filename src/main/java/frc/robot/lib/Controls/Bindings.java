@@ -23,6 +23,7 @@ public class Bindings {
         public static Trigger Amp = m_operator.x();
         public static Trigger Podium = m_operator.rightTrigger();
         public static Trigger Trap = m_operator.povLeft();
+        public static Trigger Reset = m_operator.start();
     }
 
     public final class Climber {

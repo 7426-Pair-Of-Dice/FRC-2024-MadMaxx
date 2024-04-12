@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 14.0,
-        "y": 5.5
+        "x": 12.1,
+        "y": 5.9
       },
       "prevControl": null,
       "nextControl": {
-        "x": 11.55974007298766,
-        "y": 1.1359271902707988
+        "x": 7.937447226245804,
+        "y": 2.486825153830488
       },
       "isLocked": false,
       "linkedName": "Human - Luckenbach Texas - 3 - End"
     },
     {
       "anchor": {
-        "x": -3.1,
-        "y": 10.8
+        "x": -2.9,
+        "y": 9.9
       },
       "prevControl": {
-        "x": -0.5999999999999885,
-        "y": 6.469872981077809
+        "x": -0.39999999999998836,
+        "y": 5.5698729810778085
       },
       "nextControl": null,
       "isLocked": false,
@@ -41,7 +41,7 @@
             {
               "type": "named",
               "data": {
-                "name": "Secure Note Timeout"
+                "name": "Secure Intake"
               }
             }
           ]

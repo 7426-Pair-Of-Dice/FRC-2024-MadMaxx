@@ -1,8 +1,11 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.manipulator.*;
 
 public class Manipulator {
@@ -20,7 +23,16 @@ public class Manipulator {
     }
     
     public static Command stopIntake() {
-        return new RunCommand(()->{m_intake.stop();}, m_intake);
+        return new InstantCommand(()->{m_intake.stop();}, m_intake);
+    }
+
+    public static Command secureIntake() {
+        return new SequentialCommandGroup(
+            runIntake(0.9).until(() -> m_intake.lowBrake()), // Run until the low beam brake is triggered
+            runIntake(0.6).until(() -> m_intake.highBrake()), // Run at a slower speed until the high beam brake is triggered
+            runIntake(-0.1).until(() -> !m_intake.highBrake()),
+            stopIntake()
+        );
     }
 
     // Shooter Commands

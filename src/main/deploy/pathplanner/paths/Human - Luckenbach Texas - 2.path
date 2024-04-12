@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 14.22,
-        "y": 1.2
+        "x": 12.52,
+        "y": 1.9999999999999998
       },
       "prevControl": null,
       "nextControl": {
-        "x": 22.22,
-        "y": 1.2
+        "x": 6.52,
+        "y": 1.9999999999999991
       },
       "isLocked": false,
       "linkedName": "Human - Luckenbach Texas - 1 - End"
     },
     {
       "anchor": {
-        "x": -3.3000000000000003,
-        "y": 10.95
+        "x": -3.3,
+        "y": 10.049999999999999
       },
       "prevControl": {
-        "x": -0.8000000000000012,
-        "y": 6.619872981077806
+        "x": -0.8000000000000007,
+        "y": 5.719872981077805
       },
       "nextControl": null,
       "isLocked": false,
@@ -41,7 +41,7 @@
             {
               "type": "named",
               "data": {
-                "name": "Secure Note Timeout"
+                "name": "Secure Intake"
               }
             }
           ]
@@ -75,12 +75,12 @@
   "goalEndState": {
     "velocity": 0.0,
     "rotation": -60.0,
-    "rotateFast": true
+    "rotateFast": false
   },
   "reversed": false,
   "folder": "Human - Luckenbach Texas",
   "previewStartingState": {
-    "rotation": 0,
+    "rotation": -60.0,
     "velocity": 0
   },
   "useDefaultConstraints": false

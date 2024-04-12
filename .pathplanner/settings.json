@@ -7,11 +7,11 @@
     "Amp - Do Not Use",
     "Center - Royal Flush",
     "Human - Luckenbach Texas",
-    "Human - Vulture"
+    "Human - Vulture",
+    "Amp - Hit Me",
+    "Source - Test"
   ],
-  "autoFolders": [
-    "Red"
-  ],
+  "autoFolders": [],
   "defaultMaxVel": 4.73,
   "defaultMaxAccel": 3.0,
   "defaultMaxAngVel": 540.0,

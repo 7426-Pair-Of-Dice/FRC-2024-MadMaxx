@@ -7,7 +7,7 @@ package frc.robot.subsystems.body;
 public class BodyConstants {
 
     public static final ArmConfig kArmConfig = new ArmConfig(17, 18, 21);
-    public static final Limits kArmLimits = new Limits(80.0, 45.0, 0.25, 1.0 / 360.0);
+    public static final Limits kArmLimits = new Limits(80.0, 45.0, 0.29, 1.0 / 360.0);
 
     public static final ElevatorConfig kElevatorConfig = new ElevatorConfig(19, 20, 22);
     public static final Limits kElevatorLimits = new Limits(100.0, 45.0, 2.3, -0.05);
@@ -26,13 +26,14 @@ public class BodyConstants {
     public static enum Setpoint {
 
         // Setpoints
-        Idle(22.0, 0, 0.15, -0.7103000000000002),
-        IntakeGround(2.5, 0, 2.175, 0.25),
-        Speaker(22.0, 0, 0.15, -0.48640000000000017),
-        Podium(35.0, 0, 0.15, 1.1652456),
+        Idle(21.0, 0, 0.15, -0.7103000000000002),
+        IntakeGround(2.0, 0, 2.175, 0.25),
+        Speaker(21.0, 0, 0.15, -0.48640000000000017),
+        Podium(40.0, 0, 0.15, 1.1652456),
         Wing(50.0, 0, 0.15, 1.1652456),
-        Amp(115.0, 0.85, 0.74, 2),
+        Amp(116.0, 1.0, 0.6, 2),
         Trap(0.0, 0, 2.175, 0.25),
+        Reset(45.0, 1.0, -0.25, -0.5),
 
         // Clearance Setpoints
         BumperOut(20.0, 0, 2.175, 4.0),
@@ -46,9 +47,11 @@ public class BodyConstants {
         Slot3(44.0, 0, 0.15, 1.1652456), // Do Not Use Amp
         Slot4(47.0, 0, 0.15, 1.1652456), // Do Not Use Amp
         Slot5(31.0, 0, 0.15, -0.7103000000000002), // Royal Flush
-        Slot6(36.0, 0, 0.15, -0.7103000000000002), // Royal Flush
+        Slot6(22.0, 0, 0.15, -0.7103000000000002), // Royal Flush
         Slot7(29.0, 0, 0.15, -0.7103000000000002), // Royal Flush
-        Slot8(27.0, 0, 0.15, -0.7103000000000002), // Royal Flush
+        Slot8(22.0, 0, 0.15, -0.7103000000000002), // Royal Flush
+        Slot9(21.0, 0, 0.15, -0.48640000000000017), // All
+        Slot10(28.0, 0, 0.15, -0.7103000000000002), // Royal Flush
         
         AutoPhodium(45, 0, 0.15, 1.1652456);
         

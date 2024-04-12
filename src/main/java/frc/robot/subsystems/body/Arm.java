@@ -138,8 +138,9 @@ public class Arm extends SubsystemBase {
     slot0.StaticFeedforwardSign = StaticFeedforwardSignValue.UseClosedLoopSign;
     slot0.kP = 175.0;
     slot0.kI = 0.0;
-    slot0.kD = 0.03;
-    slot0.kS = 0.1;
+    slot0.kD = 0.0;
+    slot0.kS = 0.2;
+    slot0.kG = 0.5;
     slot0.kV = 0.0;
 
     // Configure PID in Slot 1
@@ -154,8 +155,8 @@ public class Arm extends SubsystemBase {
     // Configuring MotionMagic
     var motionMagic = newConfig.MotionMagic;
     motionMagic.MotionMagicAcceleration = 1500.0;
-    motionMagic.MotionMagicCruiseVelocity = 3000.0;
-    motionMagic.MotionMagicJerk = 2000.0;
+    motionMagic.MotionMagicCruiseVelocity = 4000.0;
+    motionMagic.MotionMagicJerk = 6000.0;
 
     //Configing the arm encoder
     var encoderConfig = new CANcoderConfiguration();
@@ -249,7 +250,6 @@ public class Arm extends SubsystemBase {
   }
 
   public void moveToPosition() {
-    System.out.println("This is running!");
     m_topMotor.setControl(
       m_positionOut
         .withPosition(Limelight.calculation.angle() / 360)
