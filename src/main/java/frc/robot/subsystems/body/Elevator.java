@@ -237,6 +237,8 @@ public class Elevator extends SubsystemBase {
 
     if(Constants.Dashboard.kSendDebug) {
       builder.addDoubleProperty("Voltage", ()->{return m_leftMotor.getMotorVoltage().getValueAsDouble();}, null);
+      builder.addDoubleProperty("Left Elevator Stator", ()->{return m_leftMotor.getStatorCurrent().getValueAsDouble();}, null);
+      builder.addDoubleProperty("Right Elevator Stator", ()->{return m_rightMotor.getStatorCurrent().getValueAsDouble();}, null);
       builder.addStringProperty("Setpoint Name", ()->{return m_setpoint.name();}, null);
     }
 

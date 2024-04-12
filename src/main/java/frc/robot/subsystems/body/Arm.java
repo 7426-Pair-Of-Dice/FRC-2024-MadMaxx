@@ -54,7 +54,7 @@ public class Arm extends SubsystemBase {
   private static ArmState m_state;
 
   private static double m_customAngle = 32.0;
-  public double m_temporaryRemove = 0.005;
+  public double m_temporaryRemove = 0.02;
   private static double m_closedLoopPosition = 20.0;
 
   private Alert m_topTempWarning;
@@ -195,8 +195,6 @@ public class Arm extends SubsystemBase {
         setMotors(0.0);
         break;
     }
-
-    SmartDashboard.putNumber("Arm Stator Currenty", 10);
   }
 
   public double getRotations() {
@@ -209,7 +207,9 @@ public class Arm extends SubsystemBase {
 
 
   public double getError() {
-    return getDegrees() - m_setpoint.getDegrees();
+    if(m_state == ArmState.Setpoint) {
+      return getDegrees() - m_setpoint.getDegrees();
+    } else return getDegrees() - m_customAngle;
   }
 
 
@@ -310,11 +310,10 @@ public class Arm extends SubsystemBase {
       builder.addStringProperty("Setpoint Name", ()->{return m_setpoint.name();}, null);
 
       builder.addDoubleProperty("Top Arm Stator", ()->{return m_topMotor.getStatorCurrent().getValueAsDouble();}, null);
+      builder.addDoubleProperty("Bottom Arm Stator", ()->{return m_bottomMotor.getStatorCurrent().getValueAsDouble();}, null);
 
       builder.addDoubleProperty("Debug Angle", ()->{return m_customAngle;}, (double value)->{m_customAngle=value;});
       builder.addDoubleProperty("Limelight kP", ()->{return m_temporaryRemove;}, (double value)->{m_temporaryRemove = value;});
-
-      builder.addDoubleArrayProperty("", null, null);
     }
   }
 }

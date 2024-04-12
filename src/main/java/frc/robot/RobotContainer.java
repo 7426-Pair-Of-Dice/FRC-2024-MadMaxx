@@ -111,8 +111,7 @@ public class RobotContainer {
   private static SendableChooser<Alliance> m_allianceSelector;
   
   public Command limelight_aim() {
-    return m_drivetrain.applyRequest(() -> drive.withRotationalRate(Limelight.calculateCentering())
-        );
+    return m_drivetrain.applyRequest(() -> drive.withRotationalRate(Limelight.calculateCentering()).withVelocityX(0).withVelocityY(0));
   }
 
   public RobotContainer() {

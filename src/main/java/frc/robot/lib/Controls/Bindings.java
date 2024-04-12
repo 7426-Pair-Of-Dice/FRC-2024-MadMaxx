@@ -14,7 +14,7 @@ public class Bindings {
 
     public static class Auto {
         public static Trigger Aim = m_operator.leftBumper();
-        public static Trigger Center = m_drive.rightTrigger();
+        public static Trigger Center = m_drive.leftTrigger();
     }
 
     public static class Setpoint {
@@ -42,7 +42,7 @@ public class Bindings {
     }
 
     public final class Intake {
-        public static Trigger In = m_drive.rightBumper();
+        public static Trigger In = m_drive.rightTrigger();
         public static Trigger Beam = m_operator.a();
         public static Trigger Out = m_operator.b();
     }

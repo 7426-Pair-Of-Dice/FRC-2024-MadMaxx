@@ -11,7 +11,7 @@ public final class Constants {
         public static final boolean kSendErrors = true;
 
         /** Send all PID reference points, typically sending the desired velocity or position of all PID loops. */
-        public static final boolean kSendReferences = true;
+        public static final boolean kSendReferences = false;
 
         /** Sends all statistics on the current conditions of each subsystem, such as position, velocity, etc. */
         public static final boolean kSendStates = true;
@@ -20,7 +20,7 @@ public final class Constants {
         public static final boolean kSendDebug = true;
 
         /** Sends all telemetry from the Phoenix 6 swerve template, this is only recommended when troubleshooting the drivetrain. */
-        public static final boolean kSendSwerve = true;
+        public static final boolean kSendSwerve = false;
     }
 
 }
