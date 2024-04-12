@@ -141,7 +141,7 @@ public class RobotContainer {
     brake = new SwerveRequest.SwerveDriveBrake();
     point = new SwerveRequest.PointWheelsAt();
     
-    m_registerCommands = new RegisterCommands(m_arm, m_elevator, m_intake, m_shooter, m_drivetrain);
+    m_registerCommands = new RegisterCommands();
     m_registerCommands.register();
     
     m_drivetrain.setDefaultCommand(

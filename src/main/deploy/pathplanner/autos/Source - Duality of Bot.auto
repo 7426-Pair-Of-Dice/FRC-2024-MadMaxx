@@ -2,31 +2,37 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.14,
-      "y": 12.73873873873874
+      "x": 1.35,
+      "y": 1.35
     },
-    "rotation": 60.0
+    "rotation": 150.0
   },
   "command": {
     "type": "sequential",
     "data": {
       "commands": [
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "Amp - Card Suits - 1"
+            "name": "Setpoint Idle"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Amp - Card Suits - 2"
+            "pathName": "Source - Duality of Bot - 1"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Amp - Card Suits - 3"
+            "pathName": "Source - Duality of Bot - 2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Setpoint Idle"
           }
         }
       ]

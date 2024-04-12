@@ -74,7 +74,7 @@ public class Intake extends SubsystemBase {
     m_bottomMotor.setSmartCurrentLimit((int)kIntakeLimits.supplyLimit());
     // m_bottomMotor.enableVoltageCompensation(12.0);
     // m_bottomMotor.setOpenLoopRampRate(0.5);
-    m_bottomMotor.follow(m_topMotor);
+    // m_bottomMotor.follow(m_topMotor);
     m_bottomMotor.clearFaults();
 
     m_topMotor.burnFlash();
@@ -103,11 +103,17 @@ public class Intake extends SubsystemBase {
   }
 
   public void setPercent(double percent) {
-    m_topMotor.set(percent);
+    setPercent(percent, percent);
+  }
+
+  public void setPercent(double top, double bottom) {
+    m_topMotor.set(top);
+    m_bottomMotor.set(bottom);
   }
 
   public void stop() {
     m_topMotor.set(0);
+    m_bottomMotor.set(0);
   }
 
   public boolean highBrake() {

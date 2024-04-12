@@ -3,13 +3,9 @@
   "robotLength": 0.7493,
   "holonomicMode": true,
   "pathFolders": [
-    "Amp - Card Suits",
-    "Amp - Do Not Use",
     "Center - Royal Flush",
-    "Human - Luckenbach Texas",
-    "Human - Vulture",
-    "Amp - Hit Me",
-    "Source - Test"
+    "Human - Houston Texas",
+    "Source - Duality of Bot"
   ],
   "autoFolders": [],
   "defaultMaxVel": 4.73,
