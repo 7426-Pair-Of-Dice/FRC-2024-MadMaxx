@@ -49,14 +49,22 @@ public class Swerve extends SwerveDrivetrain implements Subsystem {
             TalonFX steer = this.getModule(i).getSteerMotor();
             
             var supplyLimit = new CurrentLimitsConfigs();
-            supplyLimit.SupplyCurrentLimit = 80;
+            supplyLimit.SupplyCurrentLimit = 62.5;
             supplyLimit.SupplyCurrentLimitEnable = true;
+            supplyLimit.StatorCurrentLimit = 72.5;
+            supplyLimit.StatorCurrentLimitEnable = true;
 
             drive.getConfigurator().apply(supplyLimit);
             steer.getConfigurator().apply(supplyLimit);
 
-            // drive.optimizeBusUtilization();
-            // steer.optimizeBusUtilization();
+            drive.optimizeBusUtilization();
+            steer.optimizeBusUtilization();
+
+            drive.getPosition().setUpdateFrequency(50);
+            drive.getVelocity().setUpdateFrequency(50);
+
+            steer.getPosition().setUpdateFrequency(50);
+            steer.getVelocity().setUpdateFrequency(50);
         }
         configurePathPlanner();
         if (Utils.isSimulation()) {

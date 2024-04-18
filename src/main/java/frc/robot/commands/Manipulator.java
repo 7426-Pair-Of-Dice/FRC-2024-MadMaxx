@@ -27,11 +27,22 @@ public class Manipulator {
     }
 
     public static Command secureIntake() {
+        return secureIntake(false);
+    }
+
+    public static Command secureIntake(boolean reverseShooter) {
+        Command reverseManipulator = reverseShooter ? new ParallelCommandGroup(
+            runIntake(-0.1),
+            runShooter(-10.0)
+        ) : runIntake(-0.1);
+
+        Command stopManipulator = reverseShooter ? stopManipulator() : stopIntake();
+
         return new SequentialCommandGroup(
-            runIntake(0.9).until(() -> m_intake.lowBrake()), // Run until the low beam brake is triggered
+            runIntake(1.0).until(() -> m_intake.lowBrake()), // Run until the low beam brake is triggered
             runIntake(0.6).until(() -> m_intake.highBrake()), // Run at a slower speed until the high beam brake is triggered
-            runIntake(-0.1).until(() -> !m_intake.highBrake()),
-            stopIntake()
+            reverseManipulator.until(() -> !m_intake.highBrake()),
+            stopManipulator
         );
     }
 

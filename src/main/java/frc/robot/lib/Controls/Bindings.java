@@ -14,6 +14,7 @@ public class Bindings {
 
     public static class Auto {
         public static Trigger Aim = m_operator.leftBumper();
+        public static Trigger Rev = m_operator.rightTrigger();
         public static Trigger Center = m_drive.leftTrigger();
     }
 
@@ -21,7 +22,7 @@ public class Bindings {
         public static Trigger IntakeGround = m_operator.rightBumper();
         public static Trigger Speaker = m_operator.leftTrigger();
         public static Trigger Amp = m_operator.x();
-        public static Trigger Podium = m_operator.rightTrigger();
+        public static Trigger Podium = m_operator.y();
         public static Trigger Trap = m_operator.povLeft();
         public static Trigger Reset = m_operator.start();
     }
@@ -42,7 +43,7 @@ public class Bindings {
     }
 
     public final class Intake {
-        public static Trigger In = m_drive.rightTrigger();
+        public static Trigger In = m_drive.rightTrigger().or(m_drive.rightBumper());
         public static Trigger Beam = m_operator.a();
         public static Trigger Out = m_operator.b();
     }

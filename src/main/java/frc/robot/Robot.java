@@ -30,7 +30,7 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     m_robotContainer = new RobotContainer();
-    RobotController.setBrownoutVoltage(6.5);
+    RobotController.setBrownoutVoltage(6.0);
   }
 
   @Override

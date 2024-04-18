@@ -55,8 +55,10 @@ public class Shooter extends SubsystemBase {
     configMotor(m_topMotor.getConfigurator());
     configMotor(m_bottomMotor.getConfigurator());
 
-    // m_topMotor.optimizeBusUtilization();
-    // m_bottomMotor.optimizeBusUtilization();
+    m_topMotor.optimizeBusUtilization();
+    m_bottomMotor.optimizeBusUtilization();
+
+    m_topMotor.getVelocity().setUpdateFrequency(50);
 
     m_topOutput.UpdateFreqHz = 0;
     m_bottomOutput.UpdateFreqHz = 0;

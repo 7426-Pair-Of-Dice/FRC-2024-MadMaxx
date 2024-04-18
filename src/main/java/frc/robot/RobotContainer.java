@@ -16,8 +16,6 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
@@ -25,7 +23,6 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.commands.AutoAim;
-import frc.robot.commands.DebugShot;
 import frc.robot.commands.RegisterCommands;
 import frc.robot.commands.UpdateSetpoint;
 import frc.robot.lib.Controls.Bindings;
@@ -34,7 +31,6 @@ import frc.robot.shared.Constants;
 import frc.robot.shared.Limelight;
 import frc.robot.subsystems.body.BodyConstants.Setpoint;
 import frc.robot.subsystems.body.*;
-import frc.robot.subsystems.body.Arm.ArmState;
 import frc.robot.subsystems.manipulator.*;
 import frc.robot.subsystems.swerve.*;
 import frc.robot.subsystems.climber.Climber;
@@ -267,7 +263,7 @@ public class RobotContainer {
       .onFalse(stopIntake());
 
     Bindings.Intake.Beam
-      .whileTrue(secureIntake())
+      .whileTrue(secureIntake(true))
       .onFalse(stopIntake());
 
     Bindings.Intake.Out
@@ -286,7 +282,7 @@ public class RobotContainer {
 
     // Shooter
     Bindings.Shooter.Out
-      .whileTrue(runShooter(40.0))
+      .whileTrue(runShooter(55.0))
       .onFalse(stopShooter());
 
     // Commands
@@ -304,6 +300,10 @@ public class RobotContainer {
     
     Bindings.Auto.Aim
       .whileTrue(new AutoAim());
+
+    Bindings.Auto.Rev
+      .whileTrue(runShooter(70.0))
+      .onFalse(stopShooter());
 
     Bindings.Setpoint.Amp
       .whileTrue(m_setpointAmp)

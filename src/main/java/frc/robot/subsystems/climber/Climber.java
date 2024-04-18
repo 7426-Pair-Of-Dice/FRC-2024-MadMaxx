@@ -38,7 +38,7 @@ public class Climber extends SubsystemBase {
   private Climber() {
     configMotor(m_motorOne.getConfigurator());
 
-    // m_motorOne.optimizeBusUtilization();
+    m_motorOne.optimizeBusUtilization();
   }
 
   private static void configMotor(TalonFXConfigurator config) {
