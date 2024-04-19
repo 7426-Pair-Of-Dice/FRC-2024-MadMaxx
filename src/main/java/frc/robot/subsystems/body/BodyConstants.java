@@ -8,6 +8,7 @@ public class BodyConstants {
 
     public static final ArmConfig kArmConfig = new ArmConfig(17, 18, 21);
     public static final Limits kArmLimits = new Limits(80.0, 45.0, 0.29, 1.0 / 360.0);
+    public static final Limits kAutoArmLimits = new Limits(72.5, 62.5, 0.29, 1.0 / 360.0);
 
     public static final ElevatorConfig kElevatorConfig = new ElevatorConfig(19, 20, 22);
     public static final Limits kElevatorLimits = new Limits(100.0, 45.0, 2.3, -0.05);

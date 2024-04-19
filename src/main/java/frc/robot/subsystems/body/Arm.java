@@ -53,7 +53,7 @@ public class Arm extends SubsystemBase {
   private static ArmState m_state;
 
   private static double m_customAngle = 32.0;
-  public double m_temporaryRemove = 0.02;
+  public double m_temporaryRemove = 0.015;
   private static double m_closedLoopPosition = 20.0;
 
   private Alert m_topTempWarning;

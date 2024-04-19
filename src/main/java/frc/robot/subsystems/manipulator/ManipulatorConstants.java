@@ -9,7 +9,7 @@ public class ManipulatorConstants {
     public static final Limits kIntakeLimits = new Limits(0.0, 30.0);
 
     public static final MotorSetup kShooterConfig = new MotorSetup(15, 16);
-    public static final Limits kShooterLimits = new Limits(120.0, 50.0);
+    public static final Limits kShooterLimits = new Limits(80.0, 40.0);
     public static final Gains kShooterGains = new Gains(0.0,0.0,0.0,0.0,0.12,0.0);
 
     
