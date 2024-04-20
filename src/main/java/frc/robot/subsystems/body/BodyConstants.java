@@ -13,8 +13,6 @@ public class BodyConstants {
     public static final ElevatorConfig kElevatorConfig = new ElevatorConfig(19, 20, 22);
     public static final Limits kElevatorLimits = new Limits(100.0, 45.0, 2.3, -0.05);
 
-    public static final ClimberLimits kClimberLimits = new ClimberLimits(80.0, 45.0);
-
     /**
      * An enum used to store the information needed for each setpoint relating to the arm and elevator.
      *
@@ -48,7 +46,7 @@ public class BodyConstants {
         Slot3(44.0, 0, 0.15, 1.1652456), // Do Not Use Amp
         Slot4(47.0, 0, 0.15, 1.1652456), // Do Not Use Amp
         Slot5(31.0, 0, 0.15, -0.7103000000000002), // Royal Flush
-        Slot6(22.0, 0, 0.15, -0.7103000000000002), // Royal Flush
+        Slot6(27.0, 0, 0.15, -0.7103000000000002), // Royal Flush
         Slot7(29.0, 0, 0.15, -0.7103000000000002), // Royal Flush
         Slot8(22.0, 0, 0.15, -0.7103000000000002), // Royal Flush
         Slot9(19.0, 0, 0.15, -0.48640000000000017), // All

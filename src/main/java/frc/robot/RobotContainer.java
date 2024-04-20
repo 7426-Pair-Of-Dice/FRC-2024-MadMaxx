@@ -282,7 +282,7 @@ public class RobotContainer {
 
     // Shooter
     Bindings.Shooter.Out
-      .whileTrue(runShooter(55.0))
+      .whileTrue(runShooter(45.0))
       .onFalse(stopShooter());
 
     // Commands

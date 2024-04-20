@@ -15,8 +15,6 @@ import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.shared.Constants;
 
-import static frc.robot.subsystems.body.BodyConstants.*;
-
 
 public class Climber extends SubsystemBase {
   private static Climber m_instance;
@@ -49,17 +47,6 @@ public class Climber extends SubsystemBase {
     output.Inverted = InvertedValue.Clockwise_Positive;
     output.NeutralMode = NeutralModeValue.Brake;
     
-    // Set ramp period (0.02 - 0.05 secs)
-    var ramp = newConfig.OpenLoopRamps;
-    ramp.VoltageOpenLoopRampPeriod = 0.05;
-
-    // Set current limits
-    var current = newConfig.CurrentLimits;
-    current.StatorCurrentLimit = kClimberLimits.statorLimit();
-    current.StatorCurrentLimitEnable = true;
-    current.SupplyCurrentLimit = kClimberLimits.supplyLimit();
-    current.SupplyCurrentLimitEnable = true;
-
     // Set max voltage
     var voltage = newConfig.Voltage;
     voltage.PeakForwardVoltage = 6;

@@ -106,10 +106,6 @@ public class Leds {
     }
   }
 
-  private void breathe(Color c) {
-    breathe(c, new Color(0, 0, 0));
-  }
-
   private void breathe(Color c1, Color c2) {
     breathe(c1, c2, 1.0);
   }

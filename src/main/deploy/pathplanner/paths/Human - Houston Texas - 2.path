@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.142300877492312,
-        "y": -1.728355544951822
+        "x": 6.785088487178855,
+        "y": -2.4943999880708025
       },
       "isLocked": false,
       "linkedName": "Human - Houston Texas - 1 - End"
@@ -17,15 +17,15 @@
     {
       "anchor": {
         "x": 10.0,
-        "y": 2.0
+        "y": 3.0
       },
       "prevControl": {
         "x": 10.0,
-        "y": 1.5499999999999998
+        "y": 2.55
       },
       "nextControl": {
         "x": 10.0,
-        "y": 2.45
+        "y": 3.45
       },
       "isLocked": false,
       "linkedName": null
@@ -36,8 +36,8 @@
         "y": 4.300000000000001
       },
       "prevControl": {
-        "x": 7.256854249492379,
-        "y": -1.356854249492379
+        "x": 7.963961030678929,
+        "y": -2.0639610306789278
       },
       "nextControl": null,
       "isLocked": false,
