@@ -27,7 +27,6 @@ import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.shared.Alert;
 import frc.robot.shared.Constants;
-import frc.robot.shared.Limelight;
 import frc.robot.subsystems.body.BodyConstants.Setpoint;
 import frc.robot.shared.Alert.AlertType;
 import static frc.robot.subsystems.body.BodyConstants.*;
@@ -53,7 +52,6 @@ public class Arm extends SubsystemBase {
   private static ArmState m_state;
 
   private static double m_customAngle = 32.0;
-  public double m_temporaryRemove = 0.015;
   private static double m_closedLoopPosition = 20.0;
 
   private Alert m_topTempWarning;
@@ -251,7 +249,7 @@ public class Arm extends SubsystemBase {
   public void moveToPosition() {
     m_topMotor.setControl(
       m_positionOut
-        .withPosition(Limelight.calculation.angle() / 360)
+        .withPosition(m_closedLoopPosition / 360)
         .withSlot(0)
         .withFeedForward(m_setpoint.getArmFeed())
     );
@@ -312,7 +310,6 @@ public class Arm extends SubsystemBase {
       builder.addDoubleProperty("Bottom Arm Stator", ()->{return m_bottomMotor.getStatorCurrent().getValueAsDouble();}, null);
 
       builder.addDoubleProperty("Debug Angle", ()->{return m_customAngle;}, (double value)->{m_customAngle=value;});
-      builder.addDoubleProperty("Limelight kP", ()->{return m_temporaryRemove;}, (double value)->{m_temporaryRemove = value;});
     }
   }
 }

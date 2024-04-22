@@ -68,10 +68,6 @@ public class Elevator extends SubsystemBase {
     configMotor(m_leftMotor.getConfigurator());
     configMotor(m_rightMotor.getConfigurator());
 
-    // Optimize CAN Utilization
-    // m_leftMotor.optimizeBusUtilization();
-    // m_rightMotor.optimizeBusUtilization();
-
     // Set right motor to follow the left
     m_rightMotor.setControl(new Follower(m_leftMotor.getDeviceID(), false));
 

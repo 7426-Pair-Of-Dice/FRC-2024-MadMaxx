@@ -50,8 +50,6 @@ public class Intake extends SubsystemBase {
     m_topMotor.setIdleMode(IdleMode.kBrake);
     m_topMotor.setInverted(true);
     m_topMotor.setSmartCurrentLimit((int)kIntakeLimits.supplyLimit());
-    // m_topMotor.enableVoltageCompensation(12.0);
-    // m_topMotor.setOpenLoopRampRate(0.5);
     m_topMotor.clearFaults();
     
     m_encoder = m_topMotor.getEncoder();
@@ -72,9 +70,6 @@ public class Intake extends SubsystemBase {
     m_bottomMotor.setIdleMode(IdleMode.kBrake);
     m_bottomMotor.setInverted(true);
     m_bottomMotor.setSmartCurrentLimit((int)kIntakeLimits.supplyLimit());
-    // m_bottomMotor.enableVoltageCompensation(12.0);
-    // m_bottomMotor.setOpenLoopRampRate(0.5);
-    // m_bottomMotor.follow(m_topMotor);
     m_bottomMotor.clearFaults();
 
     m_topMotor.burnFlash();

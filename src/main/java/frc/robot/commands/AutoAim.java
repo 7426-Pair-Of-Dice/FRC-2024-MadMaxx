@@ -11,29 +11,52 @@ import frc.robot.subsystems.body.Arm;
 import frc.robot.subsystems.body.Arm.ArmState;
 
 public class AutoAim extends Command {
+
+  // Get subystem insances
   private Arm m_arm = Arm.getInstance();
   private Shooter m_shooter = Shooter.getInstance();
-  private boolean m_stopOnEnd = false;
 
+  /** 
+   * This boolean defaults to true, and if true will return the arm
+   * to following setpoints and stop the shooter. False is intended to be used
+   * within autonomous.
+   */
+  private boolean m_stopOnEnd;
+
+  /**
+   * This command utilizes calculations from the Limelight to automatically
+   * set the Arm's position and the Shooter's RPS in order to attempt a shot
+   * from anywhere within the wing.
+   */
   public AutoAim() {
     this(true);
   }
 
+  /**
+   * This command utilizes calculations from the Limelight to automatically
+   * set the Arm's position and the Shooter's RPS in order to attempt a shot
+   * from anywhere within the wing.
+   * 
+   * @param continueOnEnd Determines whether the arm and shooter return to normal functions once the command is interrupted.
+   */
   public AutoAim(boolean continueOnEnd) {
-    addRequirements(m_arm, m_shooter);
     m_stopOnEnd = continueOnEnd;
+    addRequirements(m_arm, m_shooter);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    // Set Arm control mode to Closed Loop
     m_arm.setState(ArmState.ClosedLoop);
+
     System.out.println("[SETPOINT] Auto Aim Start");
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+      // Set the arm position and shooter RPS to the Limelight's calculation.
       m_arm.setPosition(Limelight.calculation.angle());
       m_shooter.setMotors(Limelight.calculation.rps());
   }
@@ -42,8 +65,10 @@ public class AutoAim extends Command {
   @Override
   public void end(boolean interrupted) {
     if(m_stopOnEnd) {
+      // Set Arm control mode to Setpoint
       m_arm.setState(ArmState.Setpoint);
-      m_shooter.stop();
+      m_shooter.stop(); // Stop shooter
+
       System.out.println("[SETPOINT] Auto Aim Stop");
     }
   }

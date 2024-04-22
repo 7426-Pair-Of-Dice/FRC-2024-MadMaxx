@@ -1,8 +1,6 @@
 package frc.robot.shared;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.subsystems.body.Arm;
 import frc.robot.subsystems.swerve.SwerveConstants;
-import frc.robot.shared.LimelightHelpers;
 
 public class Limelight {
     private static final String m_primary = "limelight-april";
@@ -52,7 +50,7 @@ public class Limelight {
     }
 
     public static double calculateCentering() {
-        double kP = Arm.getInstance().m_temporaryRemove;
+        double kP = 0.015;
         return LimelightHelpers.getTX("limelight-april") 
                 * kP 
                 * SwerveConstants.kMaxAngularRate 

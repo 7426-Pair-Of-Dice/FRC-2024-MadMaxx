@@ -23,7 +23,6 @@ public class Bindings {
         public static Trigger Speaker = m_operator.leftTrigger();
         public static Trigger Amp = m_operator.x();
         public static Trigger Podium = m_operator.y();
-        public static Trigger Trap = m_operator.povLeft();
         public static Trigger Reset = m_operator.start();
     }
 
@@ -33,8 +32,7 @@ public class Bindings {
     }
 
     public final class Drivetrain {
-        public static Trigger Break = m_drive.a();
-        public static Trigger RoboOrient = m_drive.b();
+        public static Trigger Brake = m_drive.a();
         public static Trigger Reorient = m_drive.leftBumper().or(m_drive.povLeft());
     }
 

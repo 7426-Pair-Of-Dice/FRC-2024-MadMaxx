@@ -22,7 +22,6 @@ public class Robot extends TimedRobot {
   private RobotContainer m_robotContainer;
 
   private double m_autoStart = 0.0;
-  private double m_teleStart = 0.0;
 
   private boolean m_autoTimeLogged = false;
 
@@ -87,7 +86,6 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
-    m_teleStart = Timer.getFPGATimestamp();
     m_robotContainer.setRobotState(RobotState.Teleop);
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
