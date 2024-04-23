@@ -27,10 +27,7 @@ public class Leds {
   private final AddressableLEDBuffer m_buffer;
 
   // Flags used to determine LED states
-  // public Optional<Alliance> ActiveAlliance = DriverStation.getAlliance();
-  // public var ActiveAlliance = DriverStation.getAlliance();
-  public Color AllianceColor;
-  public boolean EmergencyStopped = false;
+  public static Color DefaultColor = new Color(228,0,228);
   public boolean NoteDetected = false;
   public boolean ShooterRunning = false;
   public boolean ShooterReady = false;
@@ -46,44 +43,27 @@ public class Leds {
     m_leds.start();
 
   }
-
-  public class Test {
-    
-  }
-
+  
   public synchronized void periodic() {
-    // if (DriverStation.getAlliance().isPresent()) {
-    //   try {
-    //     AllianceColor = ActiveAlliance.get() == DriverStation.Alliance.Blue ? new Color(0, 0, 255) : new Color(255, 0, 0);
-    //   } catch(Exception e) {
-        AllianceColor = new Color(228,0,228);
-    //   }
-    // }
-
     if (DriverStation.isDisabled()) {
       AutonomousFinished = false;
     }
 
-    if (DriverStation.isEStopped()) {
-      EmergencyStopped = true;
-    }
-
     solid(new Color(0, 0, 0));
     
-    if(DriverStation.isAutonomous()) solid(AllianceColor);
-    
+    if(DriverStation.isAutonomous()) solid(DefaultColor);
 
     if(NoteDetected) solid(new Color(255, 40, 0));
 
     if(ShooterRunning) percent(new Color(100, 100, 100), ShooterVelocityPercentage);
 
-    if(ShooterReady) breathe(new Color(0, 255, 0), new Color(0, 248, 0));
+    if(ShooterReady) solid(new Color(0, 255, 0));
 
     if(AutonomousFinished && (Timer.getFPGATimestamp() - AutonomousEnd) < 5.0) {
       solid(new Color(255,255,255));
     }
 
-    if(DriverStation.isDisabled()) breathe(new Color(228,0,228), AllianceColor, 4.0);
+    if(DriverStation.isDisabled()) solid(DefaultColor);
 
     m_leds.setData(m_buffer);
   }
@@ -105,18 +85,4 @@ public class Leds {
       m_buffer.setLED(i, color);
     }
   }
-
-  private void breathe(Color c1, Color c2) {
-    breathe(c1, c2, 1.0);
-  }
-  
-  private void breathe(Color c1, Color c2, double duration) {
-    double x = ((Timer.getFPGATimestamp() % duration) / duration) * 2.0 * Math.PI;
-    double ratio = (Math.sin(x) + 1.0) / 2.0;
-    double red = (c1.red * (1 - ratio)) + (c2.red * ratio);
-    double green = (c1.green * (1 - ratio)) + (c2.green * ratio);
-    double blue = (c1.blue * (1 - ratio)) + (c2.blue * ratio);
-    solid(new Color(red, green, blue));
-  }
-
 }

@@ -6,7 +6,6 @@ package frc.robot;
 
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
 import com.pathplanner.lib.auto.AutoBuilder;
-import java.util.function.Supplier;
 
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 
@@ -40,38 +39,31 @@ public class RobotContainer {
   // Declaring Input Methods
   private static OI m_oi;
   
-  private final Swerve m_drivetrain;
-
-  private final SwerveRequest.FieldCentric drive;
-
-  private final SwerveRequest.SwerveDriveBrake brake;
-  private final SwerveRequest.PointWheelsAt point;
-  private final Telemetry logger = new Telemetry(SwerveConstants.kMaxSpeed);
-
   // Declaring Subsystems
+  private final Swerve m_drivetrain;
   private final Arm m_arm;
   private final Elevator m_elevator;
   private final Intake m_intake;
   private final Climber m_climber;
   private final Shooter m_shooter;
 
-  // Setpoints
-  private final Supplier<UpdateSetpoint> m_setpointIdle;
+  // Declaring Swerve Requests
+  private final SwerveRequest.FieldCentric drive;
+  private final SwerveRequest.SwerveDriveBrake brake;
+  private final SwerveRequest.PointWheelsAt point;
+
+  // Declaring Setpoint Commands
   private final ParallelCommandGroup m_setpointIntakeGround;
   private final ParallelCommandGroup m_setpointSpeaker;
   private final ParallelCommandGroup m_setpointAmp;
   private final ParallelCommandGroup m_setpointPodium;
   
-  // Commands
+  // Declaring Commands
   private final RunCommand m_stopClimber;
 
-  // Autonomous
+  // Pathplanner Autonomous
   private final RegisterCommands m_registerCommands;
   public SendableChooser<Command> m_autoSelector;
-  
-  public Command limelight_aim() {
-    return m_drivetrain.applyRequest(() -> drive.withRotationalRate(Limelight.calculateCentering()).withVelocityX(0).withVelocityY(0));
-  }
 
   public RobotContainer() {
     // Initialize Input Methods
@@ -83,74 +75,68 @@ public class RobotContainer {
     m_intake = Intake.getInstance();
     m_climber = Climber.getInstance();
     m_shooter = Shooter.getInstance();
-    
-    // Phoenix Swerve Initialization
     m_drivetrain = SwerveConstants.DriveTrain;
-
+    
+    // Swerve Requests
     drive = new SwerveRequest.FieldCentric()
       .withDeadband(SwerveConstants.kMaxSpeed * SwerveConstants.kDeadband)
       .withRotationalDeadband(SwerveConstants.kMaxAngularRate * SwerveConstants.kDeadband)
       .withDriveRequestType(DriveRequestType.Velocity);
-
     brake = new SwerveRequest.SwerveDriveBrake();
     point = new SwerveRequest.PointWheelsAt();
+
+    // Setpoint Commands
+    m_setpointIntakeGround = new ParallelCommandGroup(
+      new SequentialCommandGroup(
+        new UpdateSetpoint(Setpoint.IntakeGround),
+        new WaitUntilCommand(()->m_intake.lowBrake()),
+        new UpdateSetpoint(Setpoint.Idle)
+      ),
+      secureIntake()
+    );
     
-    m_registerCommands = new RegisterCommands();
-    m_registerCommands.register();
+    m_setpointSpeaker = new ParallelCommandGroup(
+      new UpdateSetpoint(Setpoint.Speaker),
+      runShooter(70.0)
+    );
+
+    m_setpointAmp = new ParallelCommandGroup(
+      new UpdateSetpoint(Setpoint.Amp),
+      new RunCommand(()->{m_shooter.setVelocity(10.0);}, m_shooter)
+    );
+
+    m_setpointPodium = new ParallelCommandGroup(
+      new UpdateSetpoint(Setpoint.Podium),
+      runShooter(80.0)
+    );
+    
+    // Commands
+    m_stopClimber = new RunCommand(() -> m_climber.stop(), m_climber);
+    m_climber.setDefaultCommand(m_stopClimber);
     
     m_drivetrain.setDefaultCommand(
         m_drivetrain.applyRequest(() -> drive.withVelocityX(-m_oi.getDriver().getLeftY() * SwerveConstants.kMaxSpeed)
             .withVelocityY(-m_oi.getDriver().getLeftX() * SwerveConstants.kMaxSpeed)
             .withRotationalRate(-m_oi.getDriver().getRightX() * SwerveConstants.kMaxAngularRate)
         ));
-    
-    m_stopClimber = new RunCommand(() -> m_climber.stop(), m_climber);
 
-    m_setpointIdle = () -> {
-      return new UpdateSetpoint(m_arm, m_elevator, Setpoint.Idle);
-   
-    };
+    // Pathplanner Autonomous
+    m_registerCommands = new RegisterCommands();
+    m_registerCommands.register();
 
-    m_setpointIntakeGround = new ParallelCommandGroup(
-      new SequentialCommandGroup(
-        new UpdateSetpoint(m_arm, m_elevator, Setpoint.IntakeGround),
-        new WaitUntilCommand(()->m_intake.lowBrake()),
-        m_setpointIdle.get()
-      ),
-      secureIntake()
-    );
-    
-    m_setpointSpeaker = new ParallelCommandGroup(
-      new UpdateSetpoint(m_arm, m_elevator, Setpoint.Speaker, 0.0, 0.1),
-      runShooter(70.0)
-    
-    );
-
-    m_setpointAmp = new ParallelCommandGroup(
-      new UpdateSetpoint(m_arm, m_elevator, Setpoint.Amp, 0.0, 0.1),
-      new RunCommand(()->{m_shooter.setVelocity(10.0);}, m_shooter)
-    );
-
-    m_setpointPodium = new ParallelCommandGroup(
-      new UpdateSetpoint(m_arm, m_elevator, Setpoint.Podium, 0.0, 0.1),
-      runShooter(80.0)
-    );
-    
-    // Climber Default
-    m_climber.setDefaultCommand(m_stopClimber);
-
-    // Pathplanner
     m_autoSelector = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Autonomous", m_autoSelector);
 
+    // Configure Bindings
     configureBindings();
   }
 
   private void configureBindings() {
-
     // Swerve Bindings
     Bindings.Auto.Center
-      .whileTrue(limelight_aim());
+      .whileTrue(m_drivetrain.applyRequest(() -> 
+        drive.withRotationalRate(Limelight.calculateCentering()).withVelocityX(0).withVelocityY(0)
+      ));
 
     Bindings.Drivetrain.Brake
       .whileTrue(m_drivetrain.applyRequest(() -> brake));
@@ -172,6 +158,7 @@ public class RobotContainer {
       .whileTrue(new RunCommand(()->{m_intake.setPercent(-0.2);}, m_intake))
       .onFalse(stopIntake());
     
+
     // Climber Bindings
     Bindings.Climber.In
       .whileTrue(new RunCommand(()->{m_climber.setPercent(1.0);}, m_climber))
@@ -182,24 +169,12 @@ public class RobotContainer {
       .onFalse(m_stopClimber);
 
 
-    // Shooter
+    // Shooter Bindings
     Bindings.Shooter.Out
       .whileTrue(runShooter(45.0))
       .onFalse(stopShooter());
 
-    // Commands
-    Bindings.Setpoint.IntakeGround
-      .whileTrue(
-        // m_bumperClearOut
-        // .andThen(
-          m_setpointIntakeGround
-        )
-      .whileFalse(
-        m_setpointIdle.get()
-        .andThen(stopIntake())
-      );
-      
-    
+    // Calculated Setpoint Bindings
     Bindings.Auto.Aim
       .whileTrue(new AutoAim());
 
@@ -207,23 +182,32 @@ public class RobotContainer {
       .whileTrue(runShooter(70.0))
       .onFalse(stopShooter());
 
+
+    // Setpoint Bindings
+    Bindings.Setpoint.IntakeGround
+      .whileTrue(m_setpointIntakeGround)
+      .whileFalse(
+        new UpdateSetpoint(Setpoint.Idle)
+        .andThen(stopIntake())
+      );
+      
     Bindings.Setpoint.Amp
       .whileTrue(m_setpointAmp)
-      .onFalse(m_setpointIdle.get().andThen(stopShooter()));
+      .onFalse(new UpdateSetpoint(Setpoint.Idle).andThen(stopShooter()));
       
     Bindings.Setpoint.Speaker
       .whileTrue(m_setpointSpeaker)
-      .onFalse(m_setpointIdle.get().andThen(stopShooter()));
+      .onFalse(new UpdateSetpoint(Setpoint.Idle).andThen(stopShooter()));
       
     Bindings.Setpoint.Podium
       .whileTrue(m_setpointPodium)
-      .onFalse(m_setpointIdle.get().andThen(stopShooter()));
+      .onFalse(new UpdateSetpoint(Setpoint.Idle).andThen(stopShooter()));
       
     Bindings.Setpoint.Reset
-        .whileTrue(new ParallelCommandGroup(
-          new UpdateSetpoint(m_arm, m_elevator, Setpoint.Reset),
-          m_drivetrain.applyRequest(() -> point.withModuleDirection(new Rotation2d(0, 0)))
-        ));
+      .whileTrue(new ParallelCommandGroup(
+        new UpdateSetpoint(Setpoint.Reset),
+        m_drivetrain.applyRequest(() -> point.withModuleDirection(new Rotation2d(0, 0)))
+      ));
 
     // Dashboard
     SmartDashboard.putData(m_arm);
@@ -232,7 +216,7 @@ public class RobotContainer {
     SmartDashboard.putData(m_intake);
     
     if(Constants.Dashboard.kSendSwerve) {
-      m_drivetrain.registerTelemetry(logger::telemeterize);
+      m_drivetrain.registerTelemetry(new Telemetry(SwerveConstants.kMaxSpeed)::telemeterize);
     }
   }
 

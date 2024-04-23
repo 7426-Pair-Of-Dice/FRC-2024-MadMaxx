@@ -14,7 +14,7 @@
         {
           "type": "named",
           "data": {
-            "name": "Score Preload Flush"
+            "name": "Score Slot 1"
           }
         },
         {
@@ -36,7 +36,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Score Stateless Modified Again Again"
+                  "name": "Score Slot 2"
                 }
               },
               {
@@ -61,7 +61,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Score Stateless Modified Again Again"
+                  "name": "Score Slot 2"
                 }
               },
               {
@@ -86,7 +86,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Score Stateless Modified Again Again"
+                  "name": "Score Slot 2"
                 }
               }
             ]
@@ -105,7 +105,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Score Stateless Modified Again Again"
+                  "name": "Score Slot 2"
                 }
               }
             ]

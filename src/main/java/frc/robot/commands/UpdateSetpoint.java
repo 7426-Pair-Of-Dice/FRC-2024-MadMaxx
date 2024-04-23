@@ -19,13 +19,13 @@ public class UpdateSetpoint extends Command {
   private final double m_armDelay;
   private final double m_elevatorDelay;
 
-  public UpdateSetpoint(Arm arm, Elevator elevator, Setpoint setpoint) {
-    this(arm, elevator, setpoint, 0.0, 0.0);
+  public UpdateSetpoint(Setpoint setpoint) {
+    this(setpoint, 0.0, 0.0);
   }
 
-  public UpdateSetpoint(Arm arm, Elevator elevator, Setpoint setpoint, double armDelay, double elevatorDelay) {
-    m_arm = arm;
-    m_elevator = elevator;
+  public UpdateSetpoint(Setpoint setpoint, double armDelay, double elevatorDelay) {
+    m_arm = Arm.getInstance();
+    m_elevator = Elevator.getInstance();
     m_setpoint = setpoint;
 
     m_armDelay = armDelay;

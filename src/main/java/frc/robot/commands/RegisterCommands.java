@@ -4,7 +4,6 @@
 
 package frc.robot.commands;
 
-
 import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.wpilibj2.command.Command;
@@ -16,29 +15,30 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.subsystems.body.BodyConstants.Setpoint;
 import frc.robot.subsystems.body.Arm;
-import frc.robot.subsystems.body.Elevator;
 import frc.robot.subsystems.body.Arm.ArmState;
 import frc.robot.subsystems.manipulator.Intake;
 import frc.robot.subsystems.manipulator.Shooter;
 
 import static frc.robot.commands.Manipulator.secureIntake;
 
-/** Add your docs here. */
+/**
+ * Register commands is used to keep pathplanner's named commands organized
+ * and separate from the rest of the code. I definitely enjoy the separation
+ * of this approach, but major improvements can be made to optimize the commands
+ * themselves. 
+ */
 public class RegisterCommands {
     private final Arm m_arm;
-    private final Elevator m_elevator;
     private final Intake m_intake;
     private final Shooter m_shooter;
 
     public RegisterCommands() {
         m_arm = Arm.getInstance();
-        m_elevator = Elevator.getInstance();
         m_intake = Intake.getInstance();
         m_shooter = Shooter.getInstance();
     }
 
     public void register() {
-
         // Shooter and Intake commands
         NamedCommands.registerCommand(
             "Stop Manipulator", 
@@ -67,60 +67,57 @@ public class RegisterCommands {
         );
 
         // Setpoint Commands
-        NamedCommands.registerCommand("Setpoint Idle", new UpdateSetpoint(m_arm, m_elevator, Setpoint.Idle));
+        NamedCommands.registerCommand("Setpoint Idle", new UpdateSetpoint(Setpoint.Idle));
         NamedCommands.registerCommand("Setpoint Intake In", intakeSetpoint(false));
         NamedCommands.registerCommand("Setpoint Intake Out", intakeSetpoint(true));
 
         NamedCommands.registerCommand("Beam to Idle", new SequentialCommandGroup(
             new WaitUntilCommand(()->{return m_intake.lowBrake();}),
-            new UpdateSetpoint(m_arm, m_elevator, Setpoint.Idle)
+            new UpdateSetpoint(Setpoint.Idle)
         ));
-        NamedCommands.registerCommand("Auto Aim", new AutoAim(true));
 
         // Group Commands
         NamedCommands.registerCommand(
             "Score Preload",
             new SequentialCommandGroup(
-                new UpdateSetpoint(m_arm, m_elevator, Setpoint.Slot9),
+                new UpdateSetpoint(Setpoint.Slot9),
                 runShooter(80.0, 1.25),
                 runIntake(1.0, 0.25),
-                new UpdateSetpoint(m_arm, m_elevator, Setpoint.Idle),
+                new UpdateSetpoint(Setpoint.Idle),
                 runShooter(0.0, 0.0),
                 runIntake(0.0, 0.0)
             )
         );
         
-        NamedCommands.registerCommand(
-            "Score Preload Flush",
-            new SequentialCommandGroup(
-                new UpdateSetpoint(m_arm, m_elevator, Setpoint.Slot9),
-                runShooter(80.0, 1.0),
-                runIntake(1.0, 0.08),
-                new UpdateSetpoint(m_arm, m_elevator, Setpoint.Idle),
-                runShooter(0.0, 0.0),
-                runIntake(0.0, 0.0)
-            )
-        );
-
         NamedCommands.registerCommand(
             "Score Slot 1",
             new SequentialCommandGroup(
-                new UpdateSetpoint(m_arm, m_elevator, Setpoint.Slot6),
-                runIntake(1.0, 0.5),
-                new UpdateSetpoint(m_arm, m_elevator, Setpoint.Idle),
+                new UpdateSetpoint(Setpoint.Slot9),
+                runShooter(80.0, 1.0),
+                runIntake(1.0, 0.08),
+                new UpdateSetpoint(Setpoint.Idle),
+                runShooter(0.0, 0.0),
+                runIntake(0.0, 0.0)
+            )
+        );
+        
+        NamedCommands.registerCommand(
+            "Score Slot 2",
+            new SequentialCommandGroup(
+                new UpdateSetpoint(Setpoint.Slot6),
+                runIntake(1.0, 0.2),
+                new UpdateSetpoint(Setpoint.Idle),
                 runShooter(0.0, 0.0),
                 runIntake(0.0, 0.0)
             )
         );
 
-        // I hate this
-        
         NamedCommands.registerCommand(
-            "Score Stateless Modified Again Again",
+            "Score Slot 3",
             new SequentialCommandGroup(
-                new UpdateSetpoint(m_arm, m_elevator, Setpoint.Slot6),
-                runIntake(1.0, 0.2),
-                new UpdateSetpoint(m_arm, m_elevator, Setpoint.Idle),
+                new UpdateSetpoint(Setpoint.Slot6),
+                runIntake(1.0, 0.5),
+                new UpdateSetpoint(Setpoint.Idle),
                 runShooter(0.0, 0.0),
                 runIntake(0.0, 0.0)
             )
@@ -132,11 +129,11 @@ public class RegisterCommands {
     private Command intakeSetpoint(boolean out) {
         if(out) {
             return new SequentialCommandGroup(
-                new UpdateSetpoint(m_arm, m_elevator, Setpoint.IntakeGround)
+                new UpdateSetpoint(Setpoint.IntakeGround)
             );
         } else {
             return new SequentialCommandGroup(
-                new UpdateSetpoint(m_arm, m_elevator, Setpoint.Idle)
+                new UpdateSetpoint(Setpoint.Idle)
             );
         }
     }
