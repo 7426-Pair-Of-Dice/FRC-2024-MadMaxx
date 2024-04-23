@@ -37,16 +37,6 @@ import static frc.robot.commands.Manipulator.*;
 
 public class RobotContainer {
 
-  public enum RobotState {
-    Teleop,
-    Autonomous,
-    Test,
-    Disabled
-  }
-
-  private static RobotState m_robotState;
-  public static Supplier<RobotState> robotStateSupplier;
-
   // Declaring Input Methods
   private static OI m_oi;
   
@@ -86,8 +76,6 @@ public class RobotContainer {
   public RobotContainer() {
     // Initialize Input Methods
     m_oi = OI.getInstance();
-
-    robotStateSupplier = () -> m_robotState;
 
     // Initialize Subsystems
     m_arm = Arm.getInstance();
@@ -140,7 +128,7 @@ public class RobotContainer {
 
     m_setpointAmp = new ParallelCommandGroup(
       new UpdateSetpoint(m_arm, m_elevator, Setpoint.Amp, 0.0, 0.1),
-      new RunCommand(()->{m_shooter.setMotors(10.0);}, m_shooter)
+      new RunCommand(()->{m_shooter.setVelocity(10.0);}, m_shooter)
     );
 
     m_setpointPodium = new ParallelCommandGroup(
@@ -246,19 +234,9 @@ public class RobotContainer {
     if(Constants.Dashboard.kSendSwerve) {
       m_drivetrain.registerTelemetry(logger::telemeterize);
     }
-
-
   }
 
   public Command getAutonomousCommand() {
     return m_autoSelector.getSelected();
-  }
-
-  public static RobotState getRobotState() {
-    return m_robotState;
-  }
-
-  public void setRobotState(RobotState state) {
-      m_robotState = state;
   }
 }

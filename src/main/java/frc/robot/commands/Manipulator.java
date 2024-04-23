@@ -48,7 +48,7 @@ public class Manipulator {
     // Shooter Commands
 
     public static Command runShooter(double rps) {
-        return new RunCommand(()->{m_shooter.setMotors(rps);}, m_shooter);
+        return new RunCommand(()->{m_shooter.setVelocity(rps);}, m_shooter);
     }
     
     public static Command stopShooter() {
@@ -60,7 +60,7 @@ public class Manipulator {
     public static Command ejectNote() {
         return new ParallelCommandGroup(
             new RunCommand(()->{m_intake.setPercent(-0.4);}, m_intake),
-            new RunCommand(()->{m_shooter.setMotors(-15.0);}, m_shooter)
+            new RunCommand(()->{m_shooter.setVelocity(-15.0);}, m_shooter)
         );
     }
 

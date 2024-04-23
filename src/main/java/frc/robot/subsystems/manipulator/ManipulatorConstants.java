@@ -12,7 +12,6 @@ public class ManipulatorConstants {
     public static final Limits kShooterLimits = new Limits(80.0, 40.0);
     public static final Gains kShooterGains = new Gains(0.0,0.0,0.0,0.0,0.12,0.0);
 
-    
     public record MotorSetup(int topId, int bottomId) {};
     public record Limits(double statorLimit, double supplyLimit) {};
     public record Gains(double kP, double kI, double kD, double kS, double kV, double kA) {}

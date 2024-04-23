@@ -14,11 +14,10 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
 
 import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.RobotContainer;
-import frc.robot.RobotContainer.RobotState;
 import frc.robot.lib.Controls.OI;
 import frc.robot.shared.Constants;
 import frc.robot.subsystems.leds.Leds;
@@ -32,26 +31,24 @@ public class Shooter extends SubsystemBase {
     return m_instance;
   }
 
-  // The actual motor objects, nothing crazy about these
-  private final TalonFX m_topMotor = new TalonFX(kShooterConfig.topId());
-  private final TalonFX m_bottomMotor = new TalonFX(kShooterConfig.bottomId());
-  private final XboxController m_driveController = OI.getInstance().getDriver().getHID();
+  private final TalonFX m_topMotor;
+  private final TalonFX m_bottomMotor;
 
-  // This seems to be what you would use to determine the power sent to the motor
-  private final MotionMagicVelocityVoltage m_topOutput = new MotionMagicVelocityVoltage(0, 0, true, 0, 0, false, false, false);
-  private final MotionMagicVelocityVoltage m_bottomOutput = new MotionMagicVelocityVoltage(0, 0, true, 0, 0, false, false, false);
+  private final MotionMagicVelocityVoltage m_output;
+  
+  private final XboxController m_driver = OI.getInstance().getDriver().getHID();
 
   private static double m_velocity;
   public static double m_setVelocity;
 
-  private static double m_threshold = 4.0;
+  private static final double kThreshold = 4.0;
 
-  private static double m_customRPS = 70.0; 
-  
-
-  /** Creates a new Shooter. */
   private Shooter() {
-  
+    m_topMotor = new TalonFX(kShooterConfig.topId());
+    m_bottomMotor = new TalonFX(kShooterConfig.bottomId());
+
+    m_output = new MotionMagicVelocityVoltage(0, 0, false, 0, 0, false, false, false);
+        
     configMotor(m_topMotor.getConfigurator());
     configMotor(m_bottomMotor.getConfigurator());
 
@@ -60,13 +57,13 @@ public class Shooter extends SubsystemBase {
 
     m_topMotor.getVelocity().setUpdateFrequency(50);
 
-    m_topOutput.UpdateFreqHz = 0;
-    m_bottomOutput.UpdateFreqHz = 0;
+    m_output.UpdateFreqHz = 0;
 
     m_velocity = 0.0;
   }
 
   private static void configMotor(TalonFXConfigurator config) {
+    // Creating a new configuration to ensure we get the same results every time
     var newConfig = new TalonFXConfiguration();
 
     // Configure idle mode and polarity
@@ -100,51 +97,68 @@ public class Shooter extends SubsystemBase {
     motionMagic.MotionMagicCruiseVelocity = 320.0;
     motionMagic.MotionMagicJerk = 1600.0;
 
+    // Apply configuration
     config.apply(newConfig, 0.050);
   }
 
-
-  public void setMotors(double rps) {
+  /**
+   * Sets the velocity on the top and bottom shooter motors.
+   * @param rps Target velocity to drive toward in rotations per second.
+   */
+  public void setVelocity(double rps) {
     m_velocity = rps;
 
-    m_topMotor.setControl(m_topOutput.withVelocity(m_velocity).withAcceleration(90));
-    m_bottomMotor.setControl(m_bottomOutput.withVelocity(m_velocity).withAcceleration(90));
+    m_topMotor.setControl(m_output.withVelocity(m_velocity).withAcceleration(90));
+    m_bottomMotor.setControl(m_output.withVelocity(m_velocity).withAcceleration(90));
+  }
+  
+  /**
+   * Stops both shooter motors.
+   */
+  public void stop() {
+    m_velocity = 0.0;
+    m_driver.setRumble(RumbleType.kBothRumble, 0.0);
+
+    m_topMotor.setControl(m_output.withVelocity(m_velocity));
+    m_bottomMotor.setControl(m_output.withVelocity(m_velocity));
   }
 
-  public double getError() {
-    return m_velocity - getVelocity();
-  }
-
+  /**
+   * @return Velocity of the top motor in mechanism rotations per second.
+   */
   public double getVelocity() {
     return m_topMotor.getVelocity().getValueAsDouble();
   }
 
-  public boolean velocityReached() {
-    return Math.abs(getError()) < m_threshold;
+  /**
+   * @return The error between the actual velocity versus the desired velocity.
+   */
+  public double getError() {
+    return m_velocity - getVelocity();
   }
 
-  public void stop() {
-    m_velocity = 0.0;
-    m_driveController.setRumble(RumbleType.kBothRumble, 0.0);
-    m_topMotor.setControl(m_topOutput.withVelocity(m_velocity));
-    m_bottomMotor.setControl(m_bottomOutput.withVelocity(m_velocity));
+  /**
+   * @return True if the current error is within a desired threshold.
+   */
+  public boolean velocityReached() {
+    return Math.abs(getError()) < kThreshold;
   }
+
 
   @Override
   public void periodic() {
-    
+    // True if the shooter has a non-zero reference, in teleop, and is within threshold.
+    boolean shooterReady = m_velocity > 0
+                          && DriverStation.isTeleop()
+                          && velocityReached();
+
+    // Update Led flags to display shooter status.
     Leds.getInstance().ShooterRunning = m_velocity > 0;
     Leds.getInstance().ShooterVelocityPercentage = getVelocity() / m_velocity;
-    Leds.getInstance().ShooterReady = false;
+    Leds.getInstance().ShooterReady = shooterReady;
 
-    if(m_velocity > 0 && RobotContainer.robotStateSupplier.get() == RobotState.Teleop && getVelocity() > (m_velocity - 5)) {
-      Leds.getInstance().ShooterReady = true;
-      m_driveController.setRumble(RumbleType.kBothRumble, 0.5);
-    } else {
-      m_driveController.setRumble(RumbleType.kBothRumble, 0.0);
-    }
-
-
+    // Rumble the driver controller when the shooter is ready.
+    m_driver.setRumble(RumbleType.kBothRumble, shooterReady ? 0.5 : 0.0);
   }
 
   @Override
@@ -162,10 +176,6 @@ public class Shooter extends SubsystemBase {
     if(Constants.Dashboard.kSendStates) {
       builder.addDoubleProperty("Velocity", this::getVelocity, null);
       builder.addBooleanProperty("Shooter Locked", this::velocityReached, null);
-    }
-
-    if(Constants.Dashboard.kSendDebug) {
-      builder.addDoubleProperty("Custom RPS", ()->{return m_customRPS;}, (double value)->{m_customRPS=value;});
     }
   }
 }

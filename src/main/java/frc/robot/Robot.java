@@ -10,7 +10,6 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.RobotContainer.RobotState;
 import frc.robot.lib.Controls.OI;
 import frc.robot.shared.Limelight;
 import frc.robot.subsystems.leds.Leds;
@@ -53,9 +52,7 @@ public class Robot extends TimedRobot {
   }
 
   @Override
-  public void disabledInit() {
-    m_robotContainer.setRobotState(RobotState.Disabled);
-  }
+  public void disabledInit() {}
 
   @Override
   public void disabledPeriodic() {}
@@ -66,7 +63,6 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     m_autoStart = Timer.getFPGATimestamp();
-    m_robotContainer.setRobotState(RobotState.Autonomous);
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
     if (m_autonomousCommand != null) {
@@ -82,7 +78,6 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
-    m_robotContainer.setRobotState(RobotState.Teleop);
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
@@ -96,7 +91,6 @@ public class Robot extends TimedRobot {
 
   @Override
   public void testInit() {
-    m_robotContainer.setRobotState(RobotState.Test);
     CommandScheduler.getInstance().cancelAll();
   }
 

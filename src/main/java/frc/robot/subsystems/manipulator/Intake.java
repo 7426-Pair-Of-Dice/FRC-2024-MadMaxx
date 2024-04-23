@@ -6,9 +6,6 @@ package frc.robot.subsystems.manipulator;
 
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.RelativeEncoder;
-import com.revrobotics.SparkPIDController;
-import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
 
 import edu.wpi.first.util.sendable.SendableBuilder;
@@ -29,92 +26,69 @@ public class Intake extends SubsystemBase {
   private static CANSparkMax m_topMotor;
   private static CANSparkMax m_bottomMotor;
 
-  private static RelativeEncoder m_encoder;
-  private static SparkPIDController m_pidController;
-
   private static DigitalInput m_lowBrake;
   private static DigitalInput m_highBrake;
-  private static int kLowBrakeId = 1;
-  private static int kHighBrakeId = 2;
 
-  private static boolean m_lastBeamState = false;
-  private static double m_noteSeenPosition = 0.0;
+  private static final int kLowBrakeId = 1;
+  private static final int kHighBrakeId = 2;
 
   private Intake() {
     m_topMotor = new CANSparkMax(kIntakeConfig.topId(), MotorType.kBrushless);
     m_bottomMotor = new CANSparkMax(kIntakeConfig.bottomId(), MotorType.kBrushless);
+    
     m_lowBrake = new DigitalInput(kLowBrakeId);
     m_highBrake = new DigitalInput(kHighBrakeId);
 
-    m_topMotor.restoreFactoryDefaults();
-    m_topMotor.setIdleMode(IdleMode.kBrake);
-    m_topMotor.setInverted(true);
-    m_topMotor.setSmartCurrentLimit((int)kIntakeLimits.supplyLimit());
-    m_topMotor.clearFaults();
-    
-    m_encoder = m_topMotor.getEncoder();
-    m_encoder.setPosition(0.0);
+    configMotor(m_topMotor);
+    configMotor(m_bottomMotor, m_topMotor);
+  }
 
-    m_pidController = m_topMotor.getPIDController();
-    m_pidController.setP(0.2);
-    m_pidController.setI(0.0);
-    m_pidController.setD(0.0);
-    m_pidController.setOutputRange(-1, 1);
+  private static void configMotor(CANSparkMax motor) {
+    configMotor(motor, null);
+  }
 
-    m_pidController.setSmartMotionMaxVelocity(1000.0, 0);
-    m_pidController.setSmartMotionMinOutputVelocity(-1000.0, 0);
-    m_pidController.setSmartMotionMaxAccel(1000.0, 0);
-    m_pidController.setSmartMotionAllowedClosedLoopError(2.0, 0);
-    
-    m_bottomMotor.restoreFactoryDefaults();
-    m_bottomMotor.setIdleMode(IdleMode.kBrake);
-    m_bottomMotor.setInverted(true);
-    m_bottomMotor.setSmartCurrentLimit((int)kIntakeLimits.supplyLimit());
-    m_bottomMotor.clearFaults();
-
-    m_topMotor.burnFlash();
-    m_bottomMotor.burnFlash();
+  private static void configMotor(CANSparkMax motor, CANSparkMax leader) {
+    // Restoring factory settings to ensure that we get the same results every time
+    motor.restoreFactoryDefaults();
+    motor.setIdleMode(IdleMode.kBrake);
+    motor.setInverted(true);
+    if(motor != null) motor.follow(leader);
+    motor.setSmartCurrentLimit((int)kIntakeLimits.supplyLimit());
+    motor.clearFaults();
+    motor.burnFlash();
   }
 
   @Override
   public void periodic() {
+    // Set flag on our Leds instance if a note is detected or not.
     Leds.getInstance().NoteDetected = highBrake();
-    if(highBrake() && !m_lastBeamState) {
-      m_noteSeenPosition = m_encoder.getPosition();
-    }
-    m_lastBeamState = highBrake();
   }
 
-  public void noteToPosition() {
-    m_pidController.setReference(m_noteSeenPosition - 2000, ControlType.kSmartMotion);
-  }
-
-  public double getVelocity() {
-    return m_encoder.getVelocity();
-  }
-
-  public void setVelocity(double velocity) {
-    m_pidController.setReference(velocity, ControlType.kSmartVelocity);
-  }
-
+  /**
+   * Sets the percent output on the top and bottom intake roller.
+   * @param percent The percent to set. Value should be between -1.0 and 1.0
+   */
   public void setPercent(double percent) {
-    setPercent(percent, percent);
+    m_topMotor.set(percent);
   }
 
-  public void setPercent(double top, double bottom) {
-    m_topMotor.set(top);
-    m_bottomMotor.set(bottom);
-  }
-
+  /**
+   * Stops both intake rollers.
+   */
   public void stop() {
-    m_topMotor.set(0);
-    m_bottomMotor.set(0);
+    m_topMotor.set(0.0);
   }
 
+  /**
+   * @return The current state of the top beam brake.
+   */
   public boolean highBrake() {
     return !m_highBrake.get();
   }
 
+  /**
+   * @return The current state of the bottom beam brake.
+   */
   public boolean lowBrake() {
     return !m_lowBrake.get();
   }
@@ -122,14 +96,11 @@ public class Intake extends SubsystemBase {
   
   @Override
   public void initSendable(SendableBuilder builder) {
-    builder.setSmartDashboardType("Arm");
+    builder.setSmartDashboardType("Intake");
     
     if(Constants.Dashboard.kSendStates) {
       builder.addBooleanProperty("High Brake", this::highBrake, null);
       builder.addBooleanProperty("Low Brake", this::lowBrake, null);
-      builder.addDoubleProperty("Velocity", this::getVelocity, null);
-      builder.addDoubleProperty("Position", ()->{return m_encoder.getPosition();}, null);
-      builder.addDoubleProperty("Note Seen", ()->{return m_noteSeenPosition;}, null);
     }
 
   }

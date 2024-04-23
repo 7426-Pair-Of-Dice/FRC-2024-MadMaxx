@@ -66,11 +66,6 @@ public class RegisterCommands {
             runIntake(1.0, 5.0)
         );
 
-        NamedCommands.registerCommand(
-            "Intake Out",
-            new RunCommand(()->{m_intake.setPercent(-1.0, 1.0);}, m_intake)
-        );
-
         // Setpoint Commands
         NamedCommands.registerCommand("Setpoint Idle", new UpdateSetpoint(m_arm, m_elevator, Setpoint.Idle));
         NamedCommands.registerCommand("Setpoint Intake In", intakeSetpoint(false));
@@ -148,7 +143,7 @@ public class RegisterCommands {
 
     private Command runShooterStateless(double rps) {
         if(rps > 0) {
-            return new RunCommand(()->{m_shooter.setMotors(rps);}, m_shooter);
+            return new RunCommand(()->{m_shooter.setVelocity(rps);}, m_shooter);
         } else return new InstantCommand(()->{m_shooter.stop();}, m_shooter);
     }
 
@@ -157,7 +152,7 @@ public class RegisterCommands {
         if(rps > 0) {
             return new ParallelDeadlineGroup(
                 new WaitCommand(timeout),
-                new RunCommand(()->{m_shooter.setMotors(rps);}, m_shooter)
+                new RunCommand(()->{m_shooter.setVelocity(rps);}, m_shooter)
             );
         } else return new InstantCommand(()->{m_shooter.stop();}, m_shooter);
     }

@@ -58,7 +58,7 @@ public class AutoAim extends Command {
   public void execute() {
       // Set the arm position and shooter RPS to the Limelight's calculation.
       m_arm.setPosition(Limelight.calculation.angle());
-      m_shooter.setMotors(Limelight.calculation.rps());
+      m_shooter.setVelocity(Limelight.calculation.rps());
   }
 
   // Called once the command ends or is interrupted.
