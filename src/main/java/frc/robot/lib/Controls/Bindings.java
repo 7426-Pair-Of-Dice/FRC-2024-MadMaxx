@@ -7,6 +7,10 @@ package frc.robot.lib.Controls;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
+/**
+ * The bindings class is used to keep all DriverStation inputs organized
+ * in an effort to keep our inputs easy to read and modify on the fly.
+ */
 public class Bindings {
     private static OI m_oi = OI.getInstance();
     private static CommandXboxController m_drive = m_oi.getDriver();
