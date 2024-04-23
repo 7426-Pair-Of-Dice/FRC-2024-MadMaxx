@@ -6,3 +6,15 @@ We created all of our autonomous' on the blue side of the field in our shop, and
 
 This tool was created to simplify the process of fully cloning an autonomous, as it would take much longer to do it by hand. This tool is by no means an example of clean coding practices and was made in 20 minutes. Other than that, it works!
 
+This was programmed in Node.js and can be ran by running ``node .`` within this directory, given that Node.js is installed.
+
+### Example output
+
+```
+[0] Any - Preload Only.auto
+[1] Center - Royal Flush.auto
+[2] Human - Houston Texas.auto
+[3] Source - Duality of Bot.auto
+Which Auto would you like to duplicate?
+Index: 0
+```
