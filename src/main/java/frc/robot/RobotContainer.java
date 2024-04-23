@@ -174,11 +174,11 @@ public class RobotContainer {
     
     // Climber Bindings
     Bindings.Climber.In
-      .whileTrue(new RunCommand(()->{m_climber.setMotor(1.0);}, m_climber))
+      .whileTrue(new RunCommand(()->{m_climber.setPercent(1.0);}, m_climber))
       .onFalse(m_stopClimber);
 
     Bindings.Climber.Out
-      .whileTrue(new RunCommand(()->{m_climber.setMotor(-1.0);}, m_climber))
+      .whileTrue(new RunCommand(()->{m_climber.setPercent(-1.0);}, m_climber))
       .onFalse(m_stopClimber);
 
 

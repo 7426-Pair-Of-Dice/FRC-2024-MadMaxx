@@ -11,10 +11,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
-import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.shared.Constants;
-
 
 public class Climber extends SubsystemBase {
   private static Climber m_instance;
@@ -24,22 +21,24 @@ public class Climber extends SubsystemBase {
     return m_instance;
   }
 
-  private final int m_motorId = 25;
+  private final TalonFX m_motor;
 
-  private final TalonFX m_motorOne = new TalonFX(m_motorId);
+  private final DutyCycleOut m_output;
 
-  // This seems to be what you would use to determine the power sent to the motor
-  private final DutyCycleOut m_outputOne = new DutyCycleOut(0.0);
+  private static final int kMotorId = 25;
 
-
-  /** Creates a new Climber. */
   private Climber() {
-    configMotor(m_motorOne.getConfigurator());
+    m_motor = new TalonFX(kMotorId);
 
-    m_motorOne.optimizeBusUtilization();
+    m_output = new DutyCycleOut(0.0);
+
+    configMotor(m_motor.getConfigurator());
+
+    m_motor.optimizeBusUtilization();
   }
 
   private static void configMotor(TalonFXConfigurator config) {
+    // Creating a new configuration to ensure we get the same results every time
     var newConfig = new TalonFXConfiguration();
 
     // Configure idle mode and polarity
@@ -52,34 +51,22 @@ public class Climber extends SubsystemBase {
     voltage.PeakForwardVoltage = 6;
     voltage.PeakReverseVoltage = -6;
 
+    // Apply configuration
     config.apply(newConfig, 0.050);
   }
 
-  public double getRotations() {
-    return m_motorOne.getPosition().getValueAsDouble();
+  /**
+   * Sets the percent output on the climb motor.
+   * @param percent Proportion of supply voltage to apply in fractional units between -1 and +1
+   */
+  public void setPercent(double percent) {
+    m_motor.setControl(m_output.withOutput(percent));
   }
 
-  public void zeroEncoder() {
-    m_motorOne.setPosition(0);
-  }
-
-  public void setMotor(double percent) {
-    m_motorOne.setControl(m_outputOne.withOutput(percent));
-  }
-
+  /**
+   * Stops climb motor.
+   */
   public void stop() {
-    m_motorOne.setControl(m_outputOne.withOutput(0.0));
-  }
-
-  @Override
-  public void periodic() {}
-  
-  @Override
-  public void initSendable(SendableBuilder builder) {
-    builder.setSmartDashboardType("Arm");
-
-    if(Constants.Dashboard.kSendStates) {
-      builder.addDoubleProperty("Position", this::getRotations, null);
-    }
+    m_motor.setControl(m_output.withOutput(0.0));
   }
 }

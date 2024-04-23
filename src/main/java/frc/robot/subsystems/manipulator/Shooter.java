@@ -36,10 +36,10 @@ public class Shooter extends SubsystemBase {
 
   private final MotionMagicVelocityVoltage m_output;
   
-  private final XboxController m_driver = OI.getInstance().getDriver().getHID();
+  private static final XboxController m_driver = OI.getInstance().getDriver().getHID();
 
-  private static double m_velocity;
-  public static double m_setVelocity;
+  private double m_velocity;
+  public double m_setVelocity;
 
   private static final double kThreshold = 4.0;
 

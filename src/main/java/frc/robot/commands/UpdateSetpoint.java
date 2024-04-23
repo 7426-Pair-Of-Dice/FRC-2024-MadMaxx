@@ -42,11 +42,11 @@ public class UpdateSetpoint extends Command {
   @Override
   public void execute() {
     if(m_armDelay <= 0.0 || m_timer.hasElapsed(m_armDelay)) {
-      m_arm.setPoint(m_setpoint);
+      m_arm.updateSetpoint(m_setpoint);
     }
 
     if(m_elevatorDelay <= 0.0 || m_timer.hasElapsed(m_elevatorDelay)) {
-      m_elevator.setPoint(m_setpoint);
+      m_elevator.updateSetpoint(m_setpoint);
     }
   }
 

@@ -11,10 +11,8 @@ import com.ctre.phoenix6.configs.Slot1Configs;
 import com.ctre.phoenix6.configs.Slot2Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfigurator;
-import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
-import com.ctre.phoenix6.controls.StaticBrake;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue;
@@ -39,24 +37,13 @@ public class Elevator extends SubsystemBase {
     return m_instance;
   }
 
-  private static TalonFX m_leftMotor;
-  private static TalonFX m_rightMotor;
+  private final TalonFX m_leftMotor;
+  private final TalonFX m_rightMotor;
+  private final CANcoder m_encoder;
 
-  private static MotionMagicVoltage m_positionOut;
-  private static DutyCycleOut m_percentOut;
+  private final MotionMagicVoltage m_positionOut;
 
-  private static CANcoder m_encoder; 
-
-  private static Setpoint m_setpoint;
-  
-  private static ElevatorState m_state;
-
-  private static double m_threshold = 0.0;
-
-  public static enum ElevatorState {
-    ClosedLoop,
-    Manual
-  }
+  private Setpoint m_setpoint;
 
   private Elevator() {
     // Creating new motors and encoder
@@ -64,30 +51,43 @@ public class Elevator extends SubsystemBase {
     m_rightMotor = new TalonFX(kElevatorConfig.rightId());
     m_encoder = new CANcoder(kElevatorConfig.encoderId());
 
-    // Configure our motors
-    configMotor(m_leftMotor.getConfigurator());
+    // Creating new control modes
+    m_positionOut = new MotionMagicVoltage(0.0).withSlot(0);
+
+    // Setting default setpoint
+    m_setpoint = Setpoint.Idle;
+
+    // Configuring motors
+    configMotor(m_leftMotor.getConfigurator(), m_encoder);
     configMotor(m_rightMotor.getConfigurator());
 
     // Set right motor to follow the left
     m_rightMotor.setControl(new Follower(m_leftMotor.getDeviceID(), false));
-
-    // Creating new control modes
-    m_positionOut = new MotionMagicVoltage(0.0);
-    m_positionOut.Slot = 0;
-    m_percentOut = new DutyCycleOut(0.0);
-
-    m_setpoint = Setpoint.Idle;
-    m_state = ElevatorState.ClosedLoop;
   }
-
   
   private static void configMotor(TalonFXConfigurator config) {
+    configMotor(config, null);
+  }
+
+  private static void configMotor(TalonFXConfigurator config, CANcoder encoder) {
     var newConfig = new TalonFXConfiguration();
 
-    // Set feedback sensor to CANCoder
-    FeedbackConfigs feedback = newConfig.Feedback;
-    feedback.FeedbackRemoteSensorID = m_encoder.getDeviceID();
-    feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
+    if(encoder != null) {
+      // Set feedback sensor to CANCoder
+      FeedbackConfigs feedback = newConfig.Feedback;
+      feedback.FeedbackRemoteSensorID = encoder.getDeviceID();
+      feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
+
+      //Configing the elevator encoder
+      var encoderConfig = new CANcoderConfiguration();
+      encoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
+      encoderConfig.MagnetSensor.AbsoluteSensorRange = AbsoluteSensorRangeValue.Signed_PlusMinusHalf;
+      encoderConfig.MagnetSensor.MagnetOffset = 0;
+      encoder.getConfigurator().apply(encoderConfig, 0.05);
+      encoder.setPosition(0.0);
+
+      encoder.getConfigurator().apply(encoderConfig, 0.05);
+    }
 
     // Set soft limits
     var limits = newConfig.SoftwareLimitSwitch;
@@ -148,55 +148,18 @@ public class Elevator extends SubsystemBase {
     motionMagic.MotionMagicAcceleration = 160.0;
     motionMagic.MotionMagicCruiseVelocity = 320.0;
     motionMagic.MotionMagicJerk = 1600.0;
-
-    //Configing the elevator encoder
-    var encoderConfig = new CANcoderConfiguration();
-    encoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
-    encoderConfig.MagnetSensor.AbsoluteSensorRange = AbsoluteSensorRangeValue.Signed_PlusMinusHalf;
-    encoderConfig.MagnetSensor.MagnetOffset = 0;
-    m_encoder.getConfigurator().apply(encoderConfig, 0.05);
-    m_encoder.setPosition(0.0);
     
     config.apply(newConfig, 0.050);
   }
 
   @Override
   public void periodic() {
-    if(m_state == ElevatorState.ClosedLoop) {
-      moveToSetpoint();
-    } else {
-      setMotors(0.0);
-    }
+    moveToSetpoint();
   }
 
-  public double getRotations() {
-    return m_encoder.getPosition().getValueAsDouble(); 
-  }
-
-  public double getError() {
-    return getRotations() - m_setpoint.getRotations();
-  }
-
-  public boolean forwardLimitStatus() {
-    return kElevatorLimits.forwardLimit() < getRotations();
-  }
-
-  public boolean reverseLimitStatus() {
-    return kElevatorLimits.reverseLimit() > getRotations();
-  }
-  
-  public void setPoint(Setpoint setpoint) {
-    m_setpoint = setpoint;
-  }
-
-  public boolean setpointReached() {
-    return Math.abs(getError()) < m_threshold;
-  }
-
-  public double getSetpoint() {
-    return m_setpoint.getRotations();
-  }
-
+  /**
+   * Moves the elevator motors toward the current reference.
+   */
   public void moveToSetpoint() {
     m_leftMotor.setControl(
       m_positionOut
@@ -205,16 +168,35 @@ public class Elevator extends SubsystemBase {
       .withFeedForward(m_setpoint.getElevatorFeed()));
   }
 
-  public void setMotors(double percent) {
-    m_percentOut.Output = percent;
-    m_leftMotor.setControl(m_percentOut);
+  /**
+   * Updates the current setpoint for the elevator to reference.
+   * @param setpoint A pre-determined setpoint.
+   */
+  public void updateSetpoint(Setpoint setpoint) {
+    m_setpoint = setpoint;
   }
 
-  public void stop() {
-    m_percentOut.Output = 0.0;
-    m_leftMotor.setControl(new StaticBrake());
+  /**
+   * @return Rotations of the absolute CANCoder on the elevator.
+   */
+  public double getRotations() {
+    return m_encoder.getPosition().getValueAsDouble(); 
   }
 
+  /**
+   * @return The desired elevator position in rotations.
+   */
+  public double getReference() {
+    return m_setpoint.getRotations();
+  }
+
+  /**
+   * @return The error between the actual position versus the desired position, in rotations.
+   */
+  public double getError() {
+    return getRotations() - getReference();
+  }
+  
   @Override
   public void initSendable(SendableBuilder builder) {
     builder.setSmartDashboardType("Elevator");
@@ -224,7 +206,7 @@ public class Elevator extends SubsystemBase {
     }
     
     if(Constants.Dashboard.kSendReferences) {
-      builder.addDoubleProperty("Reference", this::getSetpoint, null);
+      builder.addDoubleProperty("Reference", this::getReference, null);
     }
 
     if(Constants.Dashboard.kSendStates) {
@@ -232,9 +214,6 @@ public class Elevator extends SubsystemBase {
     }
 
     if(Constants.Dashboard.kSendDebug) {
-      builder.addDoubleProperty("Voltage", ()->{return m_leftMotor.getMotorVoltage().getValueAsDouble();}, null);
-      builder.addDoubleProperty("Left Elevator Stator", ()->{return m_leftMotor.getStatorCurrent().getValueAsDouble();}, null);
-      builder.addDoubleProperty("Right Elevator Stator", ()->{return m_rightMotor.getStatorCurrent().getValueAsDouble();}, null);
       builder.addStringProperty("Setpoint Name", ()->{return m_setpoint.name();}, null);
     }
 
